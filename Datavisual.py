@@ -1,4 +1,6 @@
 #Heihei
+
+# Håkon sin kommenter: FØCK OFF
 import matplotlib as plt
 import numpy as np
 import pycxsimulator
