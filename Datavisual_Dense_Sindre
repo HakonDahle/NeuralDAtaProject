@@ -20,6 +20,7 @@ def readFile(fileName):
 def stepp(list,element):
     step = list.index(str(element))
     return step
+    
 
 
 
