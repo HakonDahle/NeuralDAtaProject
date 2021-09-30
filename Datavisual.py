@@ -1,7 +1,3 @@
-#Heihei
-
-# Håkon sin kommenter: FØCK OFF
-#Elias
 import matplotlib as plt
 import numpy as np
 import pycxsimulator
