@@ -32,28 +32,4 @@ def electrode_list(activeElectrodes,ti):
 
 electrodes = electrode_list(data,t)
 print("electrodes[0]: ",electrodes[0][0][1])
-# Program for organizing data in a list and add features
-import matplotlib as plt
-import numpy as np
 
-# Data for reading the file and putting each line into a list
-def readFile(fileName):
-        fileObj = open(fileName, "r") #opens the file in read mode
-        words = fileObj.read().splitlines() #puts the file into an array
-        fileObj.close()
-        return words
-
-dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
-t = [i.split()[0] for i in dense2310][:]    # Copies the data list and stores the time into a separate list
-data = [i.split()[1] for i in dense2310][:] # Copies the data list and stores the data into a separate list
-width = 8   # Number of electrodes in x direction
-height = 8  # Number of electrodes in y
-
-tomme_lister = []
-for i in range(len(electrodes)):
-    if len(electrodes[i]) == 0:
-        print(electrodes[i],i)
-
-
-electrodes = electrode_list(data,t)
-print("electrodes[0]: ",electrodes[0][0][1])
