@@ -54,6 +54,7 @@ def update():
     global time, config, nextConfig
 
     spike = int(data[time][:])  # The spiked electrode
+    
 
     for y in range(width):
         for x in range(height):
@@ -62,6 +63,7 @@ def update():
 
             if spike == x+(y*8):    # if the spike value and position of x and y correlates the state is set to 1
                 state = 1
+                
             else:   # in any other cases the value for the electrode is 0
                 state = 0
             nextConfig[y,x] = state # updates the next status of the electrode array
