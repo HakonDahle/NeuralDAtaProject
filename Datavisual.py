@@ -22,7 +22,7 @@ def stepp(list,element):
 
 
 
-dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
+dense2310 = readFile('data\Dense 2-4-10.spk.txt') # Loads the data
 t = [i.split()[0] for i in dense2310][:]    # Copies the data list and stores the time into a separate list
 data = [i.split()[1] for i in dense2310][:] # Copies the data list and stores the data into a separate list
 width = 8   # Number of electrodes in x direction
@@ -58,10 +58,12 @@ def update():
             
             state = config[y, x]    # Acquires the state of the electrode
 
-            if spike == x+(y*8):    # if the spike value and position of x and y correlates the state is set to 1
+            if spike == x+(y*8) and state == 0:    # if the spike value and position of x and y correlates the state is set to 1
                 state = 1
-            else:   # in any other cases the value for the electrode is 0
-                state = 0
+            elif spike == x+(y*8) and state != 0:
+                state += 1
+            #else:   # in any other cases the value for the electrode is 0
+                #state = 0
             nextConfig[y,x] = state # updates the next status of the electrode array
 
     time += 1
