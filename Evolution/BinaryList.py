@@ -1,24 +1,23 @@
 import random as r
 import time
 
+class BinaryList:
 
+    best_score = 0
 
-#Oppretter en klasse som kan brukes til å opprette objekt med 
-#to parametere, en liste, og en fitness-score
-class binary_list:
-
-    list = []
-    fit_score = 0
-
-    #Dette er konstruktøren i klassen, som man bruker senere til å opprette objektet
     def __init__ (self, list,fit_score):
         self.list = list
         self.fit_score = fit_score
 
-    '''def get_fit_score():
-        return self.fit_score'''
+    def update_best_score(x):
+        best_score = x
 
-#Metode som sammenligner mål-listen med listen man har
+    def get_fit_score(self):
+        return self.fit_score
+
+    def show(self):
+        print(f"list: {self.list}, fitness-score: {self.fit_score}")
+
 def compare_list(holy_grail, list):
     fit_score = 0
     for i in range(10):
@@ -26,20 +25,36 @@ def compare_list(holy_grail, list):
             fit_score += 1
     return fit_score
 
-#Metode som muterer listen man sender inn
 def mutate_list(list):
     for i in range(len(list)):
-        if r.random() <= 0.2:               #her er sannsynligheten for en mutasjon
+        if r.random() <= 0.2:         
             if list[i] == 1:
                 list[i] = 0
             else:
                 list[i] = 1
     return list
 
-#Oppretter en tom startliste, en mål-liste, en mutert tom liste, og en variabel
-#som sier hvilken evolusjon man er i, for å se hvor mange evolusjoner man trengte for å komme
-#frem til målet
-Number_of_lists = 10
+def create_n_BinaryList_objects(n):
+    bin_list = []
+    evolution_list = []
+    for i in range (n):
+        for j in range (n):
+            if r.random() < 0.5:
+                bin_list.append(0)
+            else:
+                bin_list.append(1)
+        BinaryList_object = BinaryList(bin_list,0) 
+        BinaryList_object.fit_score = compare_list(holy_grail,BinaryList_object.list) 
+        #BinaryList_object.show()
+        evolution_list.append(BinaryList_object)
+        bin_list.clear()
+        print(evolution_list[i])
+        
+holy_grail = [1,1,1,1,1,1,1,1,1,1]
+create_n_BinaryList_objects(10)
+
+
+'''Number_of_lists = 10
 bin_list = []
 start_list = []
 holy_grail = [1,1,1,1,1,1,1,1,1,1]
@@ -68,4 +83,4 @@ for i in range (Number_of_lists):
 print("den beste listen er liste nummer",index+1)
 
 
-
+'''
