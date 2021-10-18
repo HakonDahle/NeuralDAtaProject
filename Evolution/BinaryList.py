@@ -1,5 +1,6 @@
 import random as r
 import time
+#import ListMethods as lm
 
 class BinaryList:
 
@@ -9,8 +10,9 @@ class BinaryList:
         self.list = list
         self.fit_score = fit_score
 
-    def update_best_score(x):
-        best_score = x
+    def update_best_score(self,x):
+        self.best_score = x
+
 
     def get_fit_score(self):
         return self.fit_score
@@ -19,8 +21,9 @@ class BinaryList:
         print(f"list: {self.list}, fitness-score: {self.fit_score}")
 
 def compare_list(holy_grail, list):
-    fit_score = 0
-    for i in range(10):
+    fit_score = 0       
+
+    for i in range(len(list)):
         if holy_grail[i] == list[i]:
             fit_score += 1
     return fit_score
@@ -47,11 +50,35 @@ def create_n_BinaryList_objects(n):
         BinaryList_object.fit_score = compare_list(holy_grail,BinaryList_object.list) 
         #BinaryList_object.show()
         evolution_list.append(BinaryList_object)
+        evolution_list[i].show()
         bin_list.clear()
-        print(evolution_list[i])
+        #evolution_list[i].show()
+    return evolution_list
+
+def pick_best_mutation(list):
+    score = 0
+    best_mutation = 0
+    for i in range(len(list)):
+        if list[i].fit_score > score:
+            score = list[i].fit_score
+            best_mutation = list[i]
+    return best_mutation
         
-holy_grail = [1,1,1,1,1,1,1,1,1,1]
-create_n_BinaryList_objects(10)
+
+holy_grail = []
+for i in range(5):
+    holy_grail.append(1)
+
+#print(holy_grail)
+
+    
+
+list = create_n_BinaryList_objects(5)
+'''for i in range (len(list)):
+    print(list[i].list)
+'''
+Best_object = pick_best_mutation(list)
+
 
 
 '''Number_of_lists = 10
