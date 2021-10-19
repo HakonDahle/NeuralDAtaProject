@@ -29,12 +29,13 @@ def compare_list(holy_grail, list):
     return fit_score
 
 def mutate_list(list):
-    for i in range(len(list)):
-        if r.random() <= 0.2:         
-            if list[i] == 1:
-                list[i] = 0
+    for i in range(len(list.list)):
+        if r.random() <= 0.02:         
+            if list[i].list == 1:
+                list[i].list = 0
             else:
-                list[i] = 1
+                list[i].list = 1
+        list.fit_score = compare_list(holy_grail,list.list)
     return list
 
 def create_n_BinaryList_objects(n):
@@ -46,38 +47,45 @@ def create_n_BinaryList_objects(n):
                 bin_list.append(0)
             else:
                 bin_list.append(1)
-        BinaryList_object = BinaryList(bin_list,0) 
+        
+        BinaryList_object = BinaryList(bin_list[:],0) 
         BinaryList_object.fit_score = compare_list(holy_grail,BinaryList_object.list) 
         #BinaryList_object.show()
         evolution_list.append(BinaryList_object)
-        evolution_list[i].show()
+        #evolution_list[i].show()
         bin_list.clear()
         #evolution_list[i].show()
     return evolution_list
 
 def pick_best_mutation(list):
-    score = 0
+    _score = 0
     best_mutation = 0
     for i in range(len(list)):
-        if list[i].fit_score > score:
-            score = list[i].fit_score
+        if list[i].fit_score > _score:
+            _score = list[i].fit_score
             best_mutation = list[i]
-    return best_mutation
-        
+    return best_mutation     
+
+size = 100
 
 holy_grail = []
-for i in range(5):
+for i in range(size):
     holy_grail.append(1)
 
 #print(holy_grail)
 
-    
-
-list = create_n_BinaryList_objects(5)
-'''for i in range (len(list)):
-    print(list[i].list)
-'''
+score = 0   
+list = create_n_BinaryList_objects(size)
 Best_object = pick_best_mutation(list)
+
+while score < 75:
+    
+    print(score)
+    mutated_list = mutate_list(Best_object)
+    Best_object = pick_best_mutation(mutated_list)
+    score = Best_object.fit_score
+
+
 
 
 
