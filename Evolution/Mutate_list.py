@@ -47,23 +47,23 @@ def create_list(list_size, object_size):
         list_of_objects.append(obj) 
     return list_of_objects
 
-'''def mutate_list(obj):
+def mutate_list(obj):
     for i in range(len(obj.list)):
         if r.random() <= 0.1:         
             if obj.list[i] == 1:
                 obj.list[i] = 0
             else:
                 obj.list[i] = 1
-    return obj'''
+    return obj
 
-def mutate_list(list):
+'''def mutate_list(list):
     for i in range(len(list)):
         if r.random() <= 0.1:         
             if list[i] == 1:
                 list[i] = 0
             else:
                 list[i] = 1
-    return list
+    return list'''
 
 def pick_best_mutation(list):
     _score = 0
@@ -79,13 +79,11 @@ def create_new_evolution(size, obj):
     evolution = []
     
     for i in range(size):
-        obj.list = mutate_list(obj.list)
+        obj = BinaryList(mutate_list(obj),0)
         obj.fit_score = get_fit_score(obj)
-        var = obj
-        var.list = obj.list[:]
-        evolution.append(var)
+        evolution.append(obj)
         #obj.show()
-        evolution[0].show()
+        evolution[i].show()
     print("etter for loopen ser den sånn ut:")
     for j in range(size):
         evolution[j].show()
