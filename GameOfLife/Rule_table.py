@@ -11,6 +11,8 @@ def create_rule_table(length):
     return rule_table
 
 
+
+
 def mutate_rule_table(rule_table):
     for i in range(len(rule_table)):
         if r.random() <= 0.1:         

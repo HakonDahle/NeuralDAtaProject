@@ -63,7 +63,7 @@ def update():
             numberOfAlive.clear()
 
             nextConfig[y, x] = state
-    rule_set = rule.mutate_rule_table(rule_set)
+    #rule_set = rule.mutate_rule_table(rule_set)
     config, nextConfig = nextConfig, config
 
 pycxsimulator.GUI().start(func=[initialize, observe, update])
