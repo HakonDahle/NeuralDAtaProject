@@ -15,9 +15,8 @@ rule_set = rule.create_rule_table(256)
         rule_set.append(1)
 '''
 def initialize():
-    global time, config, nextConfig, steps, phenotype_electrode, phenotype_timestamp, phenotypeRastertemp
-    phenotype_electrode = []
-    phenotype_timestamp = []
+    global time, config, nextConfig, steps, phenotypeRaster, phenotypeRastertemp
+    phenotypeRaster = [[]]*64
     phenotypeRastertemp = []*64
     time = 0
     steps = 0
@@ -41,7 +40,7 @@ def observe():
     title('t = ' + str(time))
 
 def update():
-    global time, config, nextConfig, rule_set, steps, phenotype_electrode, phenotype_timestamp, phenotypeRastertemp
+    global time, config, nextConfig, rule_set, steps, phenotypeRaster,phenotypeRastertemp
 
     time += 1/fs #  20 microseconds
     steps += 1
@@ -69,17 +68,9 @@ def update():
                 phenotypeRastertemp.append([y+(x*8),time])
 
             nextConfig[y, x] = state
-        #print(phenotypeRastertemp[0][0])
-    for i in range(64):
-        for j in range(len(phenotypeRastertemp)):
-            if phenotypeRastertemp[j][0] == i:
-                phenotype_electrode.append(phenotypeRastertemp[j][0])
-                phenotype_timestamp.append(phenotypeRastertemp[j][1])
-        
-    
-    phenotypeRastertemp.clear()
+        print(phenotypeRastertemp)
     rule_set = rule.mutate_rule_table(rule_set)
+    #print("Phenotype[0]: ",phenotypeRaster)
     config, nextConfig = nextConfig, config
 
-    
 pycxsimulator.GUI().start(func=[initialize, observe, update])
