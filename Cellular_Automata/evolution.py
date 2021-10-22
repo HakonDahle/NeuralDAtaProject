@@ -47,10 +47,10 @@ if __name__ == '__main__':
         for i in range(len(mutertliste)):
             print(mutertliste[i])       
             '''
-    list_of_rule_sets = create_list_of_n_rules(4,265)
+    list_of_rule_sets = create_list_of_n_rules(4,256)
     sim_output = sim.simulate(list_of_rule_sets)
 
     for i in range(len(sim_output)):
-        print(sim_output[i])
+        print(len(sim_output[i]))
         print("---------------------")
 
