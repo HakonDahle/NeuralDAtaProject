@@ -37,7 +37,7 @@ def initialize():
 def update(rule_set):
     global time, config, nextConfig, spikes_info
 
-    time += 0.00002
+    time += 0.01
     #rule_set = rule_set[:]
     electrode_number = 0
     spikes_info = []
@@ -100,7 +100,7 @@ def simulate(list_of_rule_sets):
     initialize()
 
     for i in range(len(list_of_rule_sets)):
-        while time < 1800:
+        while time < 100:
             update(list_of_rule_sets[i])
             copy_spikes = copy.deepcopy(spikes_info)
             

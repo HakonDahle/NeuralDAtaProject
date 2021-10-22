@@ -1,12 +1,13 @@
 import random as r
 #from numpy import num
 import simulate as sim
+import fitness as fit
 
 def create_rule_table(length):
 
     rule_table = []
     for i in range(length):
-        if r.random() < 0.5:
+        if r.random() < 0.8:
             rule_table.append(0)
         else:
             rule_table.append(1)
@@ -50,7 +51,15 @@ if __name__ == '__main__':
     list_of_rule_sets = create_list_of_n_rules(4,256)
     sim_output = sim.simulate(list_of_rule_sets)
 
-    for i in range(len(sim_output)):
-        print(len(sim_output[i]))
-        print("---------------------")
+    #fit = []
 
+    beste_regel, fitness_score = fit.pick_best_rule_set(sim_output)
+    print(f"beste regel er denne: {beste_regel}")
+    print(f"fitness score er {fitness_score}")
+
+    mutert_regelliste = create_mutated_list_of_rules(list_of_rule_sets[beste_regel],4)
+    sim_output = sim.simulate(mutert_regelliste)
+
+    beste_regel, fitness_score = fit.pick_best_rule_set(sim_output)
+    print(f"beste regel er denne: {beste_regel}")
+    print(f"fitness score er {fitness_score}")
