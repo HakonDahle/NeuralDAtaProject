@@ -4,13 +4,15 @@ import random as r
 import evolution as ev
 import copy
 
+#Her kan du endre tiden i update() time+= xx, den står nå på 0.01, skal vel stå på 0.00002
+#i simulate() må du endre while time < 100 til det den skal stå på.
 
 width = 5
 height = 5
 initProb = 0.2 #sannsynlighet for å starte med spike
 t = 0
 
-#list_of_rule_sets = ev.create_list_of_n_rules(2,265)
+
 list_of_spikes_rule_n = []
 spikes_info = []
 spikes_list = []
@@ -38,7 +40,6 @@ def update(rule_set):
     global time, config, nextConfig, spikes_info
 
     time += 0.01
-    #rule_set = rule_set[:]
     electrode_number = 0
     spikes_info = []
 
@@ -72,26 +73,6 @@ def update(rule_set):
     #rule_set = rule.mutate_rule_table(rule_set)
     config, nextConfig = nextConfig, config
     #return spikes_info
-
-'''initialize()
-
-
-for i in range(len(list_of_rule_sets)):
-    while time < 10:
-        update(list_of_rule_sets[i])
-        copy_spikes = copy.deepcopy(spikes_info)
-        
-        for j in range(len(copy_spikes)):
-            spikes_list.append([time,copy_spikes[j]])
-        spikes_info.clear()
-        
-    spikes_list_copy = copy.deepcopy(spikes_list)
-  
-    list_of_spikes_rule_n.append(spikes_list_copy)
-   
-    spikes_list.clear()
-    time = 0
-'''
 
 
 def simulate(list_of_rule_sets):
