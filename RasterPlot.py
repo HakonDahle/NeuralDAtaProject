@@ -10,12 +10,22 @@ def readFile(fileName):
         fileObj.close()
         return words
 
+def datamanagement(datalist):
+    time = [float(i.split()[0]) for i in datalist][:]    # Copies the data list and stores the time into a separate list
+    spikes = [int(i.split()[1]) for i in datalist][:] # Copies the data list and stores the data into a separate list
+    if time[-1] > 1800:
+        del (time[next(x[0] for x in enumerate(time) if x[1] > 30*60):]) # clears all samples above 30 min
+        del (spikes[len(time):]) # clears all samples above 30 min
+    return time, spikes
+
 dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
-t = [float(i.split()[0]) for i in dense2310][:]    # Copies the data list and stores the time into a separate list
-data = [int(i.split()[1]) for i in dense2310][:] # Copies the data list and stores the data into a separate list
+sparse7231 = readFile('data\Dense 2-3-10.spk.txt')
+best_spikes = readFile('data\Best_spikes.txt')
+
 width = 8   # Number of electrodes in x direction
 height = 8  # Number of electrodes in y
 
+t, data = datamanagement(best_spikes)
 
 def electrode_list(activeElectrodes,time):    # Returns a list of timestamps organized for each electrode
     temp_array = []
