@@ -41,22 +41,24 @@ def fitnessmodel(answer,candidate):
 def evolution(ancestor):    
     children = []   # List that will contain the new generation
     for i in range(0,10):
-        inherent = ancestor[0][:]   # copies the parent
+        inherent = ancestor[:]   # copies the parent
+        print("ancestor: ",ancestor)
         for n in range(0,10):
-            prob = rand.random()    # Probability of a mutation
-            if prob <= 0.05:    # mutation of the child
+            #prob = rand.random()    # Probability of a mutation
+            if rand.random() <= 0.5:    # mutation of the child
                 if inherent[n] == 0:
                     inherent[n] = 1
-                    continue
-                elif inherent[n] == 1:
+                else: #inherent[n] == 1:
                     inherent[n] = 0
-                    continue
         children.append(inherent)   # Adding the children to the new generation
     return children
 
 # Initiate
 population = init_population()  # Generating the first random population, Generation 0
-
+nullere = [0,0,0,0,0,0,0,0,0,0]
+test = evolution(nullere)
+print(test)
+'''
 # Observe and update
 if target not in population:   # Checks if the population contains an individual equal to the target
     generationNr = 0    # Counts number of generations
@@ -70,3 +72,4 @@ if target not in population:   # Checks if the population contains an individual
         generationNr += 1
         #time.sleep(1)
 print("Your evolutionary algorithm has completed, and it took",generationNr,"generations for it to complete.")
+'''

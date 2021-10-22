@@ -62,7 +62,7 @@ def update():
                 #state = 0
             nextConfig[y,x] = state # updates the next status of the electrode array
 
-    time += 1
+    time += 0.00002
 
     config, nextConfig = nextConfig, config
 
