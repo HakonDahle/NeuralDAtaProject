@@ -18,7 +18,7 @@ def initialise(nodeamount,populationsize,edgelist):
 
     for i in range(population_size):
         for j in range(node_amount):
-            node_generator.append((j,{"decay constant": r.uniform(0.0001,0.01), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.01,0.1), "obstruction period": r.uniform(0.05,0.3)  # Configurable variables
+            node_generator.append((j,{"decay constant": r.uniform(0.001,0.1), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.001,0.01), "obstruction period": r.uniform(0.005,0.05)  # Configurable variables
             ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
             #print("i: ",i,"j: ",j,node_generator)
         node_list[i] = copy.deepcopy(node_generator)
@@ -48,7 +48,7 @@ def phenotype_generator(G_,node_list,population_size):
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 0.01:
+        while time < 1:
             for nodenr in range(len(node_list[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -124,30 +124,37 @@ def phenotype_generator(G_,node_list,population_size):
         #print("phenotype_: ",phenotype_)
         #print("i: ",i,"phenotype_temp: ",phenotype_temp)
         phenotype_temp.clear()
-    
+        '''print("phenotype0_: ",phenotype_[0])
+        print("phenotype0 len: ",len(phenotype_[0]))
+        print("phenotype1_: ",phenotype_[1])
+        print("phenotype1 len: ",len(phenotype_[1]))'''
+
     return phenotype_          
 
 
-'''
+
 """
 M U T A T I O N
 """
-def mutation(graph,node_nr):
+def mutation(graph,node_list,best_match,node_nr):
+    mutated_graph = copy.deepcopy(graph)
+    mutated_graph.add_nodes_from(node_list[best_match])
+    
     for i in range(node_nr):
-        for j in range(len(graph.nodes[i])):
+        for j in range(len(mutated_graph.nodes[i])):
             #print("length: ",len(graph.nodes[i]))
-            if r.random() <= 0.5:
+            if r.random() <= 0.9:
                 if j == 0:
-                    graph.nodes[i]["decay constant"] = r.uniform(0.01,0.5)
+                    mutated_graph.nodes[i]["decay constant"] = r.uniform(0.001,0.1)
                 elif j == 1:
-                    graph.nodes[i]["threshold"] = r.uniform(0.5,1)
+                    mutated_graph.nodes[i]["threshold"] = r.uniform(2,3)
                 elif j == 2:
-                    graph.nodes[i]["prob_selffire"] = r.uniform(0.01,0.2)
+                    mutated_graph.nodes[i]["prob selffire"] = r.uniform(0.8,0.9)
                 elif j == 3:
-                    graph.nodes[i]["obstruction period"] = r.uniform(0.05,0.3)
-    return graph
-new_generation = mutation(G,nodeamount)
-'''
+                    mutated_graph.nodes[i]["obstruction period"] = r.uniform(0.005,0.05)
+    return mutated_graph
+
+
 
 '''
 #print(G.nodes[1])
@@ -163,7 +170,7 @@ P R O G R A M
 """
 # Initialise
 nodeamount = 60
-populationsize = 3
+populationsize = 10
 
 edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
             (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
@@ -176,7 +183,27 @@ edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,
 
 G, nodelist = initialise(nodeamount,populationsize,edgelist)
 
+
 phenotype = phenotype_generator(G,nodelist,populationsize)
-print(phenotype)
-bestmatch = fit.best_fit(phenotype)
-print(bestmatch)
+
+
+bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)
+# while fitnesscore > 10000:
+    # new generation from mutation
+    # generate new phenotype
+    # Check fitness
+    # new generation from mutation
+    # new phenotype
+    # check fitness
+# create file
+
+'''G_new_generation = mutation(G,nodelist,bestmatch,nodeamount)
+    
+phenotype = phenotype_generator(G_new_generation,nodelist,populationsize)
+bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)
+
+G_new_generation2 = mutation(G_new_generation,nodelist,bestmatch,nodeamount)
+phenotype = phenotype_generator(G_new_generation,nodelist,populationsize)
+bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)'''
+
+ 
