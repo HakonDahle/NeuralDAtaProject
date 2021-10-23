@@ -86,7 +86,7 @@ if __name__ == '__main__':
         sim_output.clear()
 
 
-    f = open("best_spikes.txt", "w")
+    f = open("Best_spikes.txt", "w")
     for element in sim_output[beste_regel]:
         f.write(str(element[0]) + " " + str(element[1]) + '\n')
     f.close()
