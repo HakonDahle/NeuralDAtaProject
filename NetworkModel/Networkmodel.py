@@ -5,12 +5,11 @@ import matplotlib.pyplot as plt
 from networkx.classes.reportviews import EdgeDataView
 
 # initialise
-#genotype = {"decay": 0.5, "threshold": 1, "prob selffire": 0.2, "obstruction period": 0.3}
 
 nodeamount = 60
-populationsize = 2
-range_selffire = 0.01,0.02  # can be added into the genotype
-
+populationsize = 3
+#range_selffire = 0.01,0.02  # can be added into the genotype
+#range_decay = 
 edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
             (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
             (14,15,1),(14,22,1),(15,16,1),(15,23,1),(16,17,1),(16,24,1),(17,18,1),(17,25,1),(18,19,1),(18,26,1),(19,20,1),(19,27,1),(20,21,1),(20,28,1),(21,29,1),
@@ -22,38 +21,41 @@ edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,
 '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
 
 
-nodelist = [[0]*nodeamount]*populationsize
+
+nodelist = [[]]*populationsize
 G = nx.Graph()
+
+node_generator = []
 
 for i in range(populationsize):
     for j in range(nodeamount):
-        nodelist[i][j] = (j,{"decay constant": r.uniform(0.0001,0.01), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.01,0.1), "obstruction period": r.uniform(0.05,0.3)  # Configurable variables
-        ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0})   # Functional variables
-# legges til nodelist.append og geotype etterpå: "spike": 0, "exhausted": 0, "potential": 0
-
+        node_generator.append((j,{"decay constant": r.uniform(0.0001,0.01), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.01,0.1), "obstruction period": r.uniform(0.05,0.3)  # Configurable variables
+        ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
+        #print("i: ",i,"j: ",j,node_generator)
+    nodelist[i] = copy.deepcopy(node_generator)
+    node_generator.clear()
 
 G.add_weighted_edges_from(edgelist)
 
-#print(G.nodes.data())
 
 def phenotype_generator(G_,node_list,population_size):
     phenotype_temp = []
-    phenotype_ = []
+    phenotype_ = [[]]*population_size
     fs = 50000
-    time = 0
     for i in range(population_size):
+        time = 0
         G_.add_nodes_from(node_list[i])
+        #print("i: ",i,"nodes data: ",G_.nodes.data())
         '''G_.nodes[1]["spike"] = 1
         G_.nodes[2]["spike"] = 1
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
         while time < 0.01:
-            #print(time)
             for nodenr in range(len(node_list[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
-
+                
                 if G_.nodes[nodenr]["potential"] > 0:   # Checks if the node has a voltage potential to decrease it with the decay constant
                     #print("1: potential >0:", G_.nodes[nodenr]["potential"])
                     G_.nodes[nodenr]["potential"] -= G_.nodes[nodenr]["decay constant"]
@@ -65,7 +67,7 @@ def phenotype_generator(G_,node_list,population_size):
                 if G_.nodes[nodenr]["exhausted"] > 0:   # Exhausted nodes are inactive for a period of time
                     G_.nodes[nodenr]["exhausted"] -= 1/fs
                     #print("exhausted: ",G_.nodes[nodenr]["exhausted"])
-
+                
                 elif G_.nodes[nodenr]["exhausted"] == 0:
                     if G_.nodes[nodenr]["prev spike"] == 1:
                         G_.nodes[nodenr]["prev spike"] = 0
@@ -78,24 +80,12 @@ def phenotype_generator(G_,node_list,population_size):
                     if (G_.nodes[nodenr]["potential"] >  G_.nodes[nodenr]["threshold"]) or ((self_prob <= G_.nodes[nodenr]["prob selffire"])):  # Node spikes if threshold is exceeded
                         G_.nodes[nodenr]["spike"] = 1
                         #print("time: ",time, "potential: ", G_.nodes[nodenr]["potential"],"threshold: ",G_.nodes[nodenr]["threshold"], "self_prob: ",self_prob,"selffire: ",G_.nodes[nodenr]["prob selffire"])
-                        phenotype_.append([float(time),nodenr])
-                        #print("phenotype_: ",phenotype_)
+                        phenotype_temp.append([float(time),nodenr])
+                        #print("i: ",i,"phenotype_temp: ",phenotype_temp)
+                        
 
                 elif G_.nodes[nodenr]["exhausted"] < 0:
                     G_.nodes[nodenr]["exhausted"] = 0
-
-                '''if (G_.nodes[nodenr]["potential"] >  G_.nodes[nodenr]["threshold"]) or ((r.uniform(0.01,0.2) <= G_.nodes[nodenr]["prob selffire"])):  # Node spikes if threshold is exceeded
-                    G_.nodes[nodenr]["spike"] = 1
-                    print("time: ",time)
-                    phenotype_.append([float(time),nodenr])
-                    G_.nodes[nodenr]["potential"] = 0
-                    G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]'''
-
-                '''elif (r.uniform(0.01,0.2) <= G_.nodes[nodenr]["prob selffire"]) and (G_.nodes[nodenr]["exhausted"] == 0):
-                    G_.nodes[nodenr]["spike"] = 1
-                    G_.nodes[nodenr]["potential"] = 0
-                    G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
-                    phenotype_.append([float(time),nodenr])'''
                 
                 #print("node: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr_spike: ", G_.nodes[nbr]["spike"])
                 #print("2",G_.nodes[nodenr])
@@ -110,13 +100,16 @@ def phenotype_generator(G_,node_list,population_size):
             # add a function that checks if threshold is reached if neighbours have fired and not exhausted
             # add a function that decrease the potential (decay)
             # add a function that nodes can selffire
-
+                
             time += 1/fs
-            
+                
+            '''if G_.nodes.data("prev spike") == 1:
+                print("spike:",G_.nodes.data("spike"))'''
+
             '''# Drawing
             pos = nx.spring_layout(G_, iterations=300, seed=3977)
             color_map = []
-            if G_.nodes[nodenr]['spike'] == 1:
+            if G_.nodes[nodenr]['prev spike'] == 1:
                 color_map.append('green')
             elif G_.nodes[nodenr]['exhausted'] > 0:
                 color_map.append('red')
@@ -133,11 +126,18 @@ def phenotype_generator(G_,node_list,population_size):
                 width=3,
             )
             plt.show()'''
-        phenotype_.append(phenotype_temp)
+
+        phenotype_[i] = copy.deepcopy(phenotype_temp)
+        #print("phenotype_: ",phenotype_)
+        #print("i: ",i,"phenotype_temp: ",phenotype_temp)
+        phenotype_temp.clear()
+        
+            
+    
     return phenotype_          
 
-test = phenotype_generator(G,nodelist,populationsize)
-print(test)
+phenotype = phenotype_generator(G,nodelist,populationsize)
+
 '''
 # mutation
 def mutation(graph,node_nr):
