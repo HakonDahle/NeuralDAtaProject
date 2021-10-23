@@ -2,6 +2,8 @@ import random as r
 import copy
 import networkx as nx
 import matplotlib.pyplot as plt
+import load_data
+import fitness as fit
 from networkx.classes.reportviews import EdgeDataView
 
 """
@@ -29,6 +31,7 @@ def initialise(nodeamount,populationsize,edgelist):
     G_ = nx.Graph()
     G_.add_weighted_edges_from(edgelist)
     return G_, node_list
+
 """
 S I M U L A T I O N
 """
@@ -45,7 +48,7 @@ def phenotype_generator(G_,node_list,population_size):
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 0.01:
+        while time < 1:
             for nodenr in range(len(node_list[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -125,11 +128,6 @@ def phenotype_generator(G_,node_list,population_size):
     return phenotype_          
 
 
-"""
-F I T N E S S
-"""
-
-
 '''
 """
 M U T A T I O N
@@ -180,3 +178,5 @@ G, nodelist = initialise(nodeamount,populationsize,edgelist)
 
 phenotype = phenotype_generator(G,nodelist,populationsize)
 
+bestmatch = fit.best_fit(phenotype)
+print(bestmatch)
