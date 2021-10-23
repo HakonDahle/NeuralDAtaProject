@@ -48,7 +48,7 @@ def phenotype_generator(G_,node_list,population_size):
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 1:
+        while time < 0.01:
             for nodenr in range(len(node_list[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -177,6 +177,6 @@ edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,
 G, nodelist = initialise(nodeamount,populationsize,edgelist)
 
 phenotype = phenotype_generator(G,nodelist,populationsize)
-
+print(phenotype)
 bestmatch = fit.best_fit(phenotype)
 print(bestmatch)

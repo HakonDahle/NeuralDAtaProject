@@ -9,6 +9,7 @@ spike_list_fasit = load.get_data()
 
 def best_fit(sim_output):
     diff = abs(len(spike_list_fasit) - len(sim_output))
+    print(len(sim_output))
     return diff
 
 def pick_best_rule_set(set_of_rules):
