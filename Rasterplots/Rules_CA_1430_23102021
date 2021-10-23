@@ -1,0 +1,17 @@
+Parameters:
+Time increment = 0.1
+Max time = 1800
+Number of rules = 100
+Number of neighbours = 256
+Grid = 8*8
+Init rule prob = 0.5
+Init spike prob = 0.5
+Mutation prob = 0.0000001:
+
+Fitness:
+diff = abs(len(spike_list_fasit) - len(sim_output))
+
+Results:
+Fitnesscore: 94
+Generation nr: 1
+Elapsed time: xxx
