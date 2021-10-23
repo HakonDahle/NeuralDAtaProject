@@ -7,35 +7,28 @@ from networkx.classes.reportviews import EdgeDataView
 """
 I N I T I A L I S E 
 """
+def initialise(nodeamount,populationsize,edgelist):
+    node_amount = nodeamount
+    population_size = populationsize
 
-nodeamount = 60
-populationsize = 3
+    node_list = [[]]*population_size
+    node_generator = []
 
-nodelist = [[]]*populationsize
-node_generator = []
-
-for i in range(populationsize):
-    for j in range(nodeamount):
-        node_generator.append((j,{"decay constant": r.uniform(0.0001,0.01), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.01,0.1), "obstruction period": r.uniform(0.05,0.3)  # Configurable variables
-        ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
-        #print("i: ",i,"j: ",j,node_generator)
-    nodelist[i] = copy.deepcopy(node_generator)
-    node_generator.clear()
+    for i in range(population_size):
+        for j in range(node_amount):
+            node_generator.append((j,{"decay constant": r.uniform(0.0001,0.01), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.01,0.1), "obstruction period": r.uniform(0.05,0.3)  # Configurable variables
+            ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
+            #print("i: ",i,"j: ",j,node_generator)
+        node_list[i] = copy.deepcopy(node_generator)
+        node_generator.clear()
 
 
-edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
-            (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
-            (14,15,1),(14,22,1),(15,16,1),(15,23,1),(16,17,1),(16,24,1),(17,18,1),(17,25,1),(18,19,1),(18,26,1),(19,20,1),(19,27,1),(20,21,1),(20,28,1),(21,29,1),
-            (22,23,1),(22,30,1),(23,24,1),(23,31,1),(24,25,1),(24,32,1),(25,26,1),(25,33,1),(26,27,1),(26,34,1),(27,28,1),(27,35,1),(28,29,1),(28,36,1),(29,37,1),
-            (30,31,1),(30,38,1),(31,32,1),(31,39,1),(32,33,1),(32,40,1),(33,34,1),(33,41,1),(34,35,1),(34,42,1),(35,36,1),(35,43,1),(36,37,1),(36,44,1),(37,45,1),
-            (38,39,1),(38,46,1),(39,40,1),(39,47,1),(40,41,1),(40,48,1),(41,42,1),(41,49,1),(42,43,1),(42,50,1),(43,44,1),(43,51,1),(44,45,1),(44,52,1),(45,53,1),
-            (46,47,1),(47,48,1),(47,54,1),(48,49,1),(48,55,1),(49,50,1),(49,56,1),(50,51,1),(50,57,1),(51,52,1),(51,58,1),(52,53,1),(52,59,1),
-            (54,55,1),(55,56,1),(56,57,1),(57,58,1),(58,59,1)]
-'''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
+    
+    '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
 
-G = nx.Graph()
-G.add_weighted_edges_from(edgelist)
-
+    G_ = nx.Graph()
+    G_.add_weighted_edges_from(edgelist)
+    return G_, node_list
 """
 S I M U L A T I O N
 """
@@ -131,7 +124,6 @@ def phenotype_generator(G_,node_list,population_size):
     
     return phenotype_          
 
-phenotype = phenotype_generator(G,nodelist,populationsize)
 
 """
 F I T N E S S
@@ -167,3 +159,24 @@ G.nodes[1]['spike'] = 1
 G.nodes[2]['rest'] = 0.3
 print(G.nodes.data())
 '''
+
+"""
+P R O G R A M
+"""
+# Initialise
+nodeamount = 60
+populationsize = 3
+
+edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
+            (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
+            (14,15,1),(14,22,1),(15,16,1),(15,23,1),(16,17,1),(16,24,1),(17,18,1),(17,25,1),(18,19,1),(18,26,1),(19,20,1),(19,27,1),(20,21,1),(20,28,1),(21,29,1),
+            (22,23,1),(22,30,1),(23,24,1),(23,31,1),(24,25,1),(24,32,1),(25,26,1),(25,33,1),(26,27,1),(26,34,1),(27,28,1),(27,35,1),(28,29,1),(28,36,1),(29,37,1),
+            (30,31,1),(30,38,1),(31,32,1),(31,39,1),(32,33,1),(32,40,1),(33,34,1),(33,41,1),(34,35,1),(34,42,1),(35,36,1),(35,43,1),(36,37,1),(36,44,1),(37,45,1),
+            (38,39,1),(38,46,1),(39,40,1),(39,47,1),(40,41,1),(40,48,1),(41,42,1),(41,49,1),(42,43,1),(42,50,1),(43,44,1),(43,51,1),(44,45,1),(44,52,1),(45,53,1),
+            (46,47,1),(47,48,1),(47,54,1),(48,49,1),(48,55,1),(49,50,1),(49,56,1),(50,51,1),(50,57,1),(51,52,1),(51,58,1),(52,53,1),(52,59,1),
+            (54,55,1),(55,56,1),(56,57,1),(57,58,1),(58,59,1)]
+
+G, nodelist = initialise(nodeamount,populationsize,edgelist)
+
+phenotype = phenotype_generator(G,nodelist,populationsize)
+
