@@ -39,7 +39,8 @@ def initialize():
 def update(rule_set):
     global time, config, nextConfig, spikes_info
 
-    time += 0.00002
+    time += 0.1
+    
     electrode_number = 0
     spikes_info = []
 
