@@ -10,7 +10,7 @@ def create_rule_table(length):
 
     rule_table = []
     for i in range(length):
-        if r.random() < 0.8:
+        if r.random() < 0.5:
             rule_table.append(0)
         else:
             rule_table.append(1)
@@ -29,7 +29,7 @@ def create_mutated_list_of_rules(rule_table_to_mutate,number_of_rule_tables):
     for i in range(number_of_rule_tables):
         #mutated_rule = rule_table_to_mutate[:]
         for j in range(len(mutated_rule)):
-            if r.random() <= 0.5:
+            if r.random() <= 0.02:
                 if mutated_rule[j] == 0:
                     mutated_rule[j] = 1
                 else:
@@ -44,7 +44,7 @@ def create_mutated_list_of_rules(rule_table_to_mutate,number_of_rule_tables):
 
 if __name__ == '__main__':
     #Her velger du hvor mange regelsett du vil lage, den står på 4 nå
-    antall_regler = 4
+    antall_regler = 10
     ønsket_fitness_score = 15000 #Her må du nesten bare se ann litt, Dette er differansen
                             #Mellom antall spikes vi lager, og antall spikes i dense2310
     generasjon = 0
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         sim_output.clear()
 
 
-    f = open("best_spikes.txt", "w")
+    f = open("Best_spikes.txt", "w")
     for element in sim_output[beste_regel]:
         f.write(str(element[0]) + " " + str(element[1]) + '\n')
     f.close()

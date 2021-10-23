@@ -7,8 +7,8 @@ import copy
 #Her kan du endre tiden i update() time+= xx, den står nå på 0.01, skal vel stå på 0.00002
 #i simulate() må du endre while time < 100 til det den skal stå på.
 
-width = 5
-height = 5
+width = 8
+height = 8
 initProb = 0.2 #sannsynlighet for å starte med spike
 t = 0
 
@@ -39,7 +39,7 @@ def initialize():
 def update(rule_set):
     global time, config, nextConfig, spikes_info
 
-    time += 0.01
+    time += 0.00002
     electrode_number = 0
     spikes_info = []
 
@@ -81,7 +81,7 @@ def simulate(list_of_rule_sets):
     initialize()
 
     for i in range(len(list_of_rule_sets)):
-        while time < 100:
+        while time < 1800:
             update(list_of_rule_sets[i])
             copy_spikes = copy.deepcopy(spikes_info)
             
