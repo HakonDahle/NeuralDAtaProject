@@ -9,10 +9,9 @@ from networkx.classes.reportviews import EdgeDataView
 """
 I N I T I A L I S E 
 """
-def initialise(nodeamount,populationsize,edgelist):
+def init_generation(nodeamount,populationsize):
     node_amount = nodeamount
     population_size = populationsize
-
     node_list = [[]]*population_size
     node_generator = []
 
@@ -23,25 +22,19 @@ def initialise(nodeamount,populationsize,edgelist):
             #print("i: ",i,"j: ",j,node_generator)
         node_list[i] = copy.deepcopy(node_generator)
         node_generator.clear()
-
-
-    
     '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
-
-    G_ = nx.Graph()
-    G_.add_weighted_edges_from(edgelist)
-    return G_, node_list
+    return node_list
 
 """
 S I M U L A T I O N
 """
-def phenotype_generator(G_,node_list,population_size):
+def phenotype_generator(G_,gen,population_size):
     phenotype_temp = []
     phenotype_ = [[]]*population_size
     fs = 50000
     for i in range(population_size):
         time = 0
-        G_.add_nodes_from(node_list[i])
+        G_.add_nodes_from(gen[i])
         #print("i: ",i,"nodes data: ",G_.nodes.data())
         '''G_.nodes[1]["spike"] = 1
         G_.nodes[2]["spike"] = 1
@@ -49,7 +42,7 @@ def phenotype_generator(G_,node_list,population_size):
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
         while time < 1:
-            for nodenr in range(len(node_list[i])):
+            for nodenr in range(len(gen[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
                 
@@ -93,7 +86,6 @@ def phenotype_generator(G_,node_list,population_size):
                     G_.nodes[nodenr]["potential"] = 0
                     G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
 
-                
             time += 1/fs
                 
             '''
@@ -131,29 +123,28 @@ def phenotype_generator(G_,node_list,population_size):
 
     return phenotype_          
 
-
-
 """
 M U T A T I O N
 """
-def mutation(graph,node_list,best_match,node_nr):
+def mutation(graph,gen,best_match,node_amount,population_size):
     mutated_graph = copy.deepcopy(graph)
-    mutated_graph.add_nodes_from(node_list[best_match])
-    
-    for i in range(node_nr):
-        for j in range(len(mutated_graph.nodes[i])):
-            #print("length: ",len(graph.nodes[i]))
-            if r.random() <= 0.9:
-                if j == 0:
-                    mutated_graph.nodes[i]["decay constant"] = r.uniform(0.001,0.1)
-                elif j == 1:
-                    mutated_graph.nodes[i]["threshold"] = r.uniform(2,3)
-                elif j == 2:
-                    mutated_graph.nodes[i]["prob selffire"] = r.uniform(0.8,0.9)
-                elif j == 3:
-                    mutated_graph.nodes[i]["obstruction period"] = r.uniform(0.005,0.05)
-    return mutated_graph
-
+    mutated_population = [[]]*population_size
+    for i in range(population_size):
+        mutated_graph.add_nodes_from(gen[best_match])
+        for j in range(node_amount):
+            for k in range(len(mutated_graph.nodes[i])):
+                #print("length: ",len(graph.nodes[i]))
+                if r.random() <= 0.9:
+                    if k == 0:
+                        mutated_graph.nodes[i]["decay constant"] = r.uniform(0.001,0.1)
+                    elif k == 1:
+                        mutated_graph.nodes[i]["threshold"] = r.uniform(2,3)
+                    elif k == 2:
+                        mutated_graph.nodes[i]["prob selffire"] = r.uniform(0.8,0.9)
+                    elif k == 3:
+                        mutated_graph.nodes[i]["obstruction period"] = r.uniform(0.005,0.05)
+        mutated_population[i] = mutated_graph
+    return mutated_population
 
 
 '''
@@ -168,11 +159,13 @@ print(G.nodes.data())
 """
 P R O G R A M
 """
-# Initialise
-nodeamount = 60
-populationsize = 10
-
-edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
+def network_initialise():
+    print("Electrode array consists of 60 electrodes")
+    node_amount = input("How many nodes should be generated in the network?:")
+    population_size = input("How many individuals should comprise the population?:")
+    CA = input("Should the network be connected as CA?:")
+    if CA == "yes":
+        edge_list = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
             (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
             (14,15,1),(14,22,1),(15,16,1),(15,23,1),(16,17,1),(16,24,1),(17,18,1),(17,25,1),(18,19,1),(18,26,1),(19,20,1),(19,27,1),(20,21,1),(20,28,1),(21,29,1),
             (22,23,1),(22,30,1),(23,24,1),(23,31,1),(24,25,1),(24,32,1),(25,26,1),(25,33,1),(26,27,1),(26,34,1),(27,28,1),(27,35,1),(28,29,1),(28,36,1),(29,37,1),
@@ -180,30 +173,39 @@ edgelist = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,
             (38,39,1),(38,46,1),(39,40,1),(39,47,1),(40,41,1),(40,48,1),(41,42,1),(41,49,1),(42,43,1),(42,50,1),(43,44,1),(43,51,1),(44,45,1),(44,52,1),(45,53,1),
             (46,47,1),(47,48,1),(47,54,1),(48,49,1),(48,55,1),(49,50,1),(49,56,1),(50,51,1),(50,57,1),(51,52,1),(51,58,1),(52,53,1),(52,59,1),
             (54,55,1),(55,56,1),(56,57,1),(57,58,1),(58,59,1)]
-
-G, nodelist = initialise(nodeamount,populationsize,edgelist)
-
-
-phenotype = phenotype_generator(G,nodelist,populationsize)
+    G_ = nx.Graph()
+    G_.add_weighted_edges_from(edge_list)
+    return int(node_amount), int(population_size), G_, edge_list
 
 
-bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)
-# while fitnesscore > 10000:
-    # new generation from mutation
-    # generate new phenotype
-    # Check fitness
-    # new generation from mutation
-    # new phenotype
-    # check fitness
+# Initialise
+print("Network initalising:")
+nodeamount, populationsize, G, edgelist = network_initialise()
+
+# Update
+generation_nr = 0
+fitnesscore = 900000
+generation = init_generation(nodeamount,populationsize)
+while fitnesscore > 100000:
+    phenotype = phenotype_generator(G,generation,populationsize)
+    bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
+    print("len_pheno[0]: ",len(phenotype[0]))
+    print("len_pheno[1]: ",len(phenotype[1]))
+    print("len_pheno[2]: ",len(phenotype[2]))
+    print("best: ",bestmatch, "Fitnesscore: ",fitnesscore)
+    if generation_nr == 0:
+        print("Initial generation: ")
+    else:
+        print("Generation: ",generation_nr)
+
+    generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
+
+    generation_nr += 1
 # create file
-
-'''G_new_generation = mutation(G,nodelist,bestmatch,nodeamount)
-    
-phenotype = phenotype_generator(G_new_generation,nodelist,populationsize)
-bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)
-
-G_new_generation2 = mutation(G_new_generation,nodelist,bestmatch,nodeamount)
-phenotype = phenotype_generator(G_new_generation,nodelist,populationsize)
-bestmatch, fitness_score = fit.pick_best_rule_set(phenotype)'''
-
  
+"""
+
+- Apply number of active electrodes in fitness function?
+- Fix teamviewer
+
+"""
