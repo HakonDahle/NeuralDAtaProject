@@ -3,6 +3,7 @@ import copy
 import networkx as nx
 import matplotlib.pyplot as plt
 import load_data
+import time
 import fitness as fit
 from networkx.classes.reportviews import EdgeDataView
 
@@ -41,7 +42,7 @@ def phenotype_generator(G_,gen,population_size):
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 10:
+        while time < 1:
             for nodenr in range(len(gen[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -179,6 +180,7 @@ def network_initialise():
 
 
 # Initialise
+t0 = time.perf_counter()
 print("Network initalising:")
 nodeamount, populationsize, G, edgelist = network_initialise()
 
@@ -188,22 +190,25 @@ fitnesscore = 900000
 generation = init_generation(nodeamount,populationsize)
 
 while fitnesscore > 10000:
+    t1 = time.perf_counter()
     phenotype = phenotype_generator(G,generation,populationsize)
+    t2 = time.perf_counter()
+    
     bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
-    print("len_pheno[0]: ",len(phenotype[0]))
-    print("len_pheno[1]: ",len(phenotype[1]))
-    print("len_pheno[2]: ",len(phenotype[2]))
-    print("best: ",bestmatch, "Fitnesscore: ",fitnesscore)
+    
     if generation_nr == 0:
-        print("Initial generation: ")
+        print("Initial generation")
     else:
         print("Generation: ",generation_nr)
-
+    print("Population size: ",populationsize)
+    print("Phenotype generation finished in "+str(round(t2-t1,2))+" seconds")
+    print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
+    
     generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
 
     generation_nr += 1
-
-
+t3 = time.perf_counter()
+print("total elapsed time: ",round(t3-t2,2))
 f = open("Data\Best_spikes.txt", "w")
 for element in phenotype[bestmatch]:
     f.write(str(element[0]) + " " + str(element[1]) + '\n')
