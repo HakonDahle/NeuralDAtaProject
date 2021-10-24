@@ -1,7 +1,7 @@
 Parameters:
 Time increment = 0.1
 Max time = 1800
-Number of rules = 100
+Population size = 100
 Number of neighbours = 256
 Grid = 8*8
 Init rule prob = 0.5

@@ -1,0 +1,16 @@
+Parameters:
+Time increment: 1/50000
+Max time: 10
+Population size: 3
+Number of Nodes: 60
+Network Connection: CA (as electrode array)
+genotype: Decay_range = , Threshold_range = Prob selffire_ range = Obstruction period_range =
+mutation prob: 0.9
+
+Fitness:
+diff = abs(len(spike_list_fasit) - len(sim_output))
+
+Results:
+Fitnesscore: 75878
+Generation nr: 0
+Elapsed time: xxx
