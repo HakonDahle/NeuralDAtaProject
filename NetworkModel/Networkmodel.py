@@ -41,7 +41,7 @@ def phenotype_generator(G_,gen,population_size):
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 1:
+        while time < 10:
             for nodenr in range(len(gen[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -186,7 +186,8 @@ nodeamount, populationsize, G, edgelist = network_initialise()
 generation_nr = 0
 fitnesscore = 900000
 generation = init_generation(nodeamount,populationsize)
-while fitnesscore > 100000:
+
+while fitnesscore > 10000:
     phenotype = phenotype_generator(G,generation,populationsize)
     bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
     print("len_pheno[0]: ",len(phenotype[0]))
@@ -201,7 +202,12 @@ while fitnesscore > 100000:
     generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
 
     generation_nr += 1
-# create file
+
+
+f = open("Data\Best_spikes.txt", "w")
+for element in phenotype[bestmatch]:
+    f.write(str(element[0]) + " " + str(element[1]) + '\n')
+f.close()
  
 """
 
