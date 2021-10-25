@@ -10,11 +10,10 @@ def readFile(fileName):
         fileObj.close()
         return words
 
-dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the dense data
-sparse7231 = readFile('data\Sparse 7-2-31.spk.txt') # Loads the sparse data
+dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
+sparse7231 = readFile('data\Sparse 7-2-31.spk.txt')
 t = []
 data = []
-
 
 def datamanagement(datalist):
     time = [float(i.split()[0]) for i in datalist][:]    # Copies the data list and stores the time into a separate list
@@ -28,7 +27,7 @@ height = 8  # Number of electrodes in y
 
 t, data = datamanagement(sparse7231)
 
-
+print(t)
 # Makes a list of each spike sorted for each electrode which stores the step nr. and time stamp
 def electrode_list(activeElectrodes,time):
     temp_array = []

@@ -224,9 +224,9 @@ def multi_phenotype_generator(args):
     return phenotype_ 
 
 
-def multiprocessing(G_,gen,population_size):
+def multiprocessing(gen):
     with Pool(os.cpu_count()-1) as p:
-        pheno_type = p.map(multi_phenotype_generator(),gen)
+        pheno_type = p.map(multi_phenotype_generator,gen)
         p.close()
     return pheno_type
 
@@ -311,7 +311,9 @@ generation = init_generation(nodeamount,populationsize)
 
 while fitnesscore > 10000:
     t1 = time.perf_counter()
-    phenotype = phenotype_generator(G,generation,populationsize)
+    
+    #phenotype = phenotype_generator(G,generation,populationsize)
+    phenotype = multi_phenotype_generator([G,generation,populationsize])
     t2 = time.perf_counter()
     
     bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
