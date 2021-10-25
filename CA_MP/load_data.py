@@ -29,3 +29,7 @@ def get_data():
     t, data = datamanagement(dense2310)
     return data
 
+def get_time():
+    t, data = datamanagement(dense2310)
+    return t
+
