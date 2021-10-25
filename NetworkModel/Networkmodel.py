@@ -1,11 +1,9 @@
-import os
 import random as r
 import copy
 import networkx as nx
 import matplotlib.pyplot as plt
 import load_data
 import time
-from multiprocessing import Pool
 import fitness as fit
 from networkx.classes.reportviews import EdgeDataView
 
@@ -26,6 +24,7 @@ def init_generation(nodeamount,populationsize):
         node_list[i] = copy.deepcopy(node_generator)
         node_generator.clear()
     '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
+    #print("node_list[0]: ",node_list[0])
     return node_list
 
 """
@@ -126,110 +125,6 @@ def phenotype_generator(G_,gen,population_size):
 
     return phenotype_          
 
-
-def multi_phenotype_generator(args):
-    G_,gen,population_size = args[0], args[1], args[2]
-    phenotype_temp = []
-    phenotype_ = [[]]*population_size
-    fs = 50000
-    for i in range(population_size):
-        time = 0
-        G_.add_nodes_from(gen[i])
-        #print("i: ",i,"nodes data: ",G_.nodes.data())
-        '''G_.nodes[1]["spike"] = 1
-        G_.nodes[2]["spike"] = 1
-        G_.nodes[0]["potential"] = 0.5
-        G_.edges[0,1]["weight"] = 1
-        G_.edges[0,2]["weight"] = 1'''
-        while time < 1:
-            for nodenr in range(len(gen[i])):
-                #print("1",G_.nodes[nodenr])
-                self_prob = r.random()
-                
-                if G_.nodes[nodenr]["potential"] > 0:   # Checks if the node has a voltage potential to decrease it with the decay constant
-                    #print("1: potential >0:", G_.nodes[nodenr]["potential"])
-                    G_.nodes[nodenr]["potential"] -= G_.nodes[nodenr]["decay constant"]
-                    #print("2: potential >0:", G_.nodes[nodenr]["potential"])
-                elif G_.nodes[nodenr]["potential"] < 0:
-                    G_.nodes[nodenr]["potential"] = 0
-                    #print("potential <0:", G_.nodes[nodenr]["potential"])
-                
-                if G_.nodes[nodenr]["exhausted"] > 0:   # Exhausted nodes are inactive for a period of time
-                    G_.nodes[nodenr]["exhausted"] -= 1/fs
-                    #print("exhausted: ",G_.nodes[nodenr]["exhausted"])
-                
-                elif G_.nodes[nodenr]["exhausted"] == 0:
-                    if G_.nodes[nodenr]["prev spike"] == 1:
-                        G_.nodes[nodenr]["prev spike"] = 0
-
-                    for k, nbrs in G_.adj.items():  # Checks the neighbours for spikes and multiplies it with the weighted edge
-                        if k == i:
-                            for nbr, eattr in nbrs.items():
-                                G_.nodes[nodenr]["potential"] += G_.nodes[nbr]["prev spike"]*eattr["weight"]
-                                #print("nodenr: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr: ",nbr,"nbr_prev_spike: ", G_.nodes[nbr]["prev spike"])
-                    if (G_.nodes[nodenr]["potential"] >  G_.nodes[nodenr]["threshold"]) or ((self_prob <= G_.nodes[nodenr]["prob selffire"])):  # Node spikes if threshold is exceeded
-                        G_.nodes[nodenr]["spike"] = 1
-                        #print("time: ",time, "potential: ", G_.nodes[nodenr]["potential"],"threshold: ",G_.nodes[nodenr]["threshold"], "self_prob: ",self_prob,"selffire: ",G_.nodes[nodenr]["prob selffire"])
-                        phenotype_temp.append([float(time),nodenr])
-                        #print("i: ",i,"phenotype_temp: ",phenotype_temp)
-                        
-
-                elif G_.nodes[nodenr]["exhausted"] < 0:
-                    G_.nodes[nodenr]["exhausted"] = 0
-                
-                #print("node: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr_spike: ", G_.nodes[nbr]["spike"])
-                #print("2",G_.nodes[nodenr])
-                if G_.nodes[nodenr]["spike"] == 1:  # Resets spikes if there has been a spike in last iteration and deactivates the node
-                    G_.nodes[nodenr]["prev spike"] = 1
-                    G_.nodes[nodenr]["spike"] = 0
-                    G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
-                    G_.nodes[nodenr]["potential"] = 0
-                    G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
-
-            time += 1/fs
-                
-            '''
-            """
-            Drawing
-            """
-            pos = nx.spring_layout(G_, iterations=300, seed=3977)
-            color_map = []
-            if G_.nodes[nodenr]['prev spike'] == 1:
-                color_map.append('green')
-            elif G_.nodes[nodenr]['exhausted'] > 0:
-                color_map.append('red')
-            else:
-                color_map.append('gray')
-            nx.draw(
-                G_,
-                pos,
-                node_color=color_map,
-                edgecolors="tab:gray",  # Node surface color
-                edge_color="tab:gray",  # Color of graph edges
-                node_size=100,
-                with_labels=True,
-                width=3,
-            )
-            plt.show()'''
-
-        phenotype_[i] = copy.deepcopy(phenotype_temp)
-        #print("phenotype_: ",phenotype_)
-        #print("i: ",i,"phenotype_temp: ",phenotype_temp)
-        phenotype_temp.clear()
-        '''print("phenotype0_: ",phenotype_[0])
-        print("phenotype0 len: ",len(phenotype_[0]))
-        print("phenotype1_: ",phenotype_[1])
-        print("phenotype1 len: ",len(phenotype_[1]))'''
-
-    return phenotype_ 
-
-
-def multiprocessing(gen):
-    with Pool(os.cpu_count()-1) as p:
-        pheno_type = p.map(multi_phenotype_generator,gen)
-        p.close()
-    return pheno_type
-
 """
 M U T A T I O N
 """
@@ -250,7 +145,7 @@ def mutation(graph,gen,best_match,node_amount,population_size):
                         mutated_graph.nodes[i]["prob selffire"] = r.uniform(prob_selffire_min,prob_selffire_max)
                     elif k == 3:
                         mutated_graph.nodes[i]["obstruction period"] = r.uniform(obstruction_period_min,obstruction_period_max)
-        mutated_population[i] = mutated_graph
+        mutated_population[i] = mutated_graph # Does this return the wrong thing?
     return mutated_population
 
 
@@ -267,10 +162,12 @@ print(G.nodes.data())
 P R O G R A M
 """
 def network_initialise():
+    print("Initialising single process version")
     print("Electrode array consists of 60 electrodes")
     node_amount = input("How many nodes should be generated in the network?:")
     population_size = input("How many individuals should comprise the population?:")
     CA = input("Should the network be connected as CA?:")
+    
     if CA == "yes":
         edge_list = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
             (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
@@ -289,6 +186,7 @@ def network_initialise():
 t0 = time.perf_counter()
 print("Network initalising:")
 nodeamount, populationsize, G, edgelist = network_initialise()
+#multiprocessor.multi_network_initialise()
 
 # Update
 
@@ -306,14 +204,13 @@ obstruction_period_max = 0.05
 generation_nr = 0
 fitnesscore = 900000
 generation = init_generation(nodeamount,populationsize)
-
-
+#print("type: ",type(generation),"Generation[0]: ", generation[0])
 
 while fitnesscore > 10000:
     t1 = time.perf_counter()
     
-    #phenotype = phenotype_generator(G,generation,populationsize)
-    phenotype = multi_phenotype_generator([G,generation,populationsize])
+    phenotype = phenotype_generator(G,generation,populationsize)
+    #phenotype = multiprocessor.multiprocessor(G,generation,populationsize)
     t2 = time.perf_counter()
     
     bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
@@ -327,6 +224,7 @@ while fitnesscore > 10000:
     print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
     
     generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
+    #generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
 
     generation_nr += 1
 t3 = time.perf_counter()
