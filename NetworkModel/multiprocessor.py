@@ -4,11 +4,31 @@ import random as r
 from multiprocessing import Pool
 import os
 
-def multi_network_initialise():
+decay_min = 0.001
+decay_max = 0.1
+threshold_min = 2
+threshold_max = 3
+prob_selffire_min = 0.001
+prob_selffire_max = 0.01
+obstruction_period_min = 0.005
+obstruction_period_max = 0.05
+
+
+def network_initialise():
     print("Initialising multiprocessor version")
     node_amount = 60
     population_size = 3
-    
+    node_list = [[]]*population_size
+    node_generator = []
+
+    for i in range(population_size):
+        for j in range(node_amount):
+            node_generator.append((j,{"decay constant": r.uniform(decay_min,decay_max), "threshold": r.uniform(threshold_min,threshold_max), "prob selffire": r.uniform(prob_selffire_min,prob_selffire_max), "obstruction period": r.uniform(obstruction_period_min,obstruction_period_max)  # Configurable variables
+            ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
+            #print("i: ",i,"j: ",j,node_generator)
+        node_list[i] = copy.deepcopy(node_generator)
+        node_generator.clear()
+
     edge_list = [(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1),(4,11,1),(5,12,1),
             (6,7,1),(6,14,1),(7,8,1),(7,15,1),(8,9,1),(8,16,1),(9,10,1),(9,17,1),(10,11,1),(10,18,1),(11,12,1),(11,19,1),(12,13,1),(12,20,1),(13,21,1),
             (14,15,1),(14,22,1),(15,16,1),(15,23,1),(16,17,1),(16,24,1),(17,18,1),(17,25,1),(18,19,1),(18,26,1),(19,20,1),(19,27,1),(20,21,1),(20,28,1),(21,29,1),
@@ -17,9 +37,13 @@ def multi_network_initialise():
             (38,39,1),(38,46,1),(39,40,1),(39,47,1),(40,41,1),(40,48,1),(41,42,1),(41,49,1),(42,43,1),(42,50,1),(43,44,1),(43,51,1),(44,45,1),(44,52,1),(45,53,1),
             (46,47,1),(47,48,1),(47,54,1),(48,49,1),(48,55,1),(49,50,1),(49,56,1),(50,51,1),(50,57,1),(51,52,1),(51,58,1),(52,53,1),(52,59,1),
             (54,55,1),(55,56,1),(56,57,1),(57,58,1),(58,59,1)]
+    
+    '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
+    #print("node_list[0]: ",node_list[0])
     G_ = nx.Graph()
     G_.add_weighted_edges_from(edge_list)
-    return int(node_amount), int(population_size), G_, edge_list
+
+    return int(node_amount),int(population_size),G_,edge_list,node_list 
 
 
 def multiprocessor(G_,gen,population_size):
@@ -134,15 +158,17 @@ def multi_phenotype_generator(args):
     return phenotype_
 
 def multi_mutation(gen,best_match,node_amount,population_size):
-    best_individual = copy.deepcopy(gen[best_match])
+    best_individual = copy.deepcopy(list(gen[best_match]))
     mutated_population = [[]]*population_size
     for i in range(population_size):
         for j in range(node_amount):
             if r.random() <= 0.9:
                 if j == 0:
-                    print("best_individual[i][j][k]: ",best_individual[i][j])
-                    best_individual[i][j] = r.uniform(decay_min,decay_max)
-                    print("best_individual[i][j][k]: ",best_individual[i][j])
+                    prob = r.uniform(decay_min,decay_max)
+                    print("prob: ",prob, "type: ",type(prob))
+                    print("1: best_individual: ",best_individual[0][1]["decay constant"], "type: ",type(best_individual[0][1]["decay constant"]))
+                    best_individual[i][j]["decay constant"] = prob
+                    print("1: best_individual: ",best_individual[0][1]["decay constant"])
                 elif j == 1:
                     best_individual[i]["threshold"] = r.uniform(threshold_min,threshold_max)
                 elif j == 2:

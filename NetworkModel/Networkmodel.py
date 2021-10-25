@@ -3,6 +3,7 @@ import copy
 import networkx as nx
 import matplotlib.pyplot as plt
 import load_data
+import multiprocessor
 import time
 import fitness as fit
 from networkx.classes.reportviews import EdgeDataView
@@ -31,19 +32,21 @@ def init_generation(nodeamount,populationsize):
 S I M U L A T I O N
 """
 def phenotype_generator(G_,gen,population_size):
+    G_ = copy.deepcopy(G)
     phenotype_temp = []
     phenotype_ = [[]]*population_size
     fs = 50000
     for i in range(population_size):
         time = 0
         G_.add_nodes_from(gen[i])
+        print(G_.nodes.data())
         #print("i: ",i,"nodes data: ",G_.nodes.data())
         '''G_.nodes[1]["spike"] = 1
         G_.nodes[2]["spike"] = 1
         G_.nodes[0]["potential"] = 0.5
         G_.edges[0,1]["weight"] = 1
         G_.edges[0,2]["weight"] = 1'''
-        while time < 1:
+        while time < 0.01:
             for nodenr in range(len(gen[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -185,7 +188,8 @@ def network_initialise():
 # Initialise
 t0 = time.perf_counter()
 print("Network initalising:")
-nodeamount, populationsize, G, edgelist = network_initialise()
+#nodeamount, populationsize, G, edgelist = network_initialise()
+nodeamount, populationsize, G, edgelist = multiprocessor.network_initialise()
 #multiprocessor.multi_network_initialise()
 
 # Update
@@ -203,7 +207,7 @@ obstruction_period_max = 0.05
 
 generation_nr = 0
 fitnesscore = 900000
-generation = init_generation(nodeamount,populationsize)
+#generation = init_generation(nodeamount,populationsize)
 #print("type: ",type(generation),"Generation[0]: ", generation[0])
 
 while fitnesscore > 10000:
@@ -224,7 +228,7 @@ while fitnesscore > 10000:
     print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
     
     generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
-    #generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
+    generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
 
     generation_nr += 1
 t3 = time.perf_counter()
