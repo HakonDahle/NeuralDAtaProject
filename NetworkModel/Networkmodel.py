@@ -18,7 +18,7 @@ def init_generation(nodeamount,populationsize):
 
     for i in range(population_size):
         for j in range(node_amount):
-            node_generator.append((j,{"decay constant": r.uniform(0.001,0.1), "threshold": r.uniform(2,3), "prob selffire": r.uniform(0.001,0.01), "obstruction period": r.uniform(0.005,0.05)  # Configurable variables
+            node_generator.append((j,{"decay constant": r.uniform(decay_min,decay_max), "threshold": r.uniform(threshold_min,threshold_max), "prob selffire": r.uniform(prob_selffire_min,prob_selffire_max), "obstruction period": r.uniform(obstruction_period_min,obstruction_period_max)  # Configurable variables
             ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
             #print("i: ",i,"j: ",j,node_generator)
         node_list[i] = copy.deepcopy(node_generator)
@@ -137,13 +137,13 @@ def mutation(graph,gen,best_match,node_amount,population_size):
                 #print("length: ",len(graph.nodes[i]))
                 if r.random() <= 0.9:
                     if k == 0:
-                        mutated_graph.nodes[i]["decay constant"] = r.uniform(0.001,0.1)
+                        mutated_graph.nodes[i]["decay constant"] = r.uniform(decay_min,decay_max)
                     elif k == 1:
-                        mutated_graph.nodes[i]["threshold"] = r.uniform(2,3)
+                        mutated_graph.nodes[i]["threshold"] = r.uniform(threshold_min,threshold_max)
                     elif k == 2:
-                        mutated_graph.nodes[i]["prob selffire"] = r.uniform(0.8,0.9)
+                        mutated_graph.nodes[i]["prob selffire"] = r.uniform(prob_selffire_min,prob_selffire_max)
                     elif k == 3:
-                        mutated_graph.nodes[i]["obstruction period"] = r.uniform(0.005,0.05)
+                        mutated_graph.nodes[i]["obstruction period"] = r.uniform(obstruction_period_min,obstruction_period_max)
         mutated_population[i] = mutated_graph
     return mutated_population
 
@@ -185,9 +185,23 @@ print("Network initalising:")
 nodeamount, populationsize, G, edgelist = network_initialise()
 
 # Update
+
+# could be declared in initialise() and returned
+decay_min = 0.001
+decay_max = 0.1
+threshold_min = 2
+threshold_max = 3
+prob_selffire_min = 0.001
+prob_selffire_max = 0.01
+obstruction_period_min = 0.005
+obstruction_period_max = 0.05
+
+
 generation_nr = 0
 fitnesscore = 900000
 generation = init_generation(nodeamount,populationsize)
+
+
 
 while fitnesscore > 10000:
     t1 = time.perf_counter()
@@ -217,6 +231,7 @@ f.close()
 """
 
 - Apply number of active electrodes in fitness function?
+- Fix weights
 - Fix teamviewer
 
 """
