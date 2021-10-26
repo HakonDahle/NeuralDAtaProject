@@ -2,6 +2,7 @@ import random as r
 import copy
 import networkx as nx
 import matplotlib.pyplot as plt
+from networkx.classes.function import freeze
 import load_data
 import multiprocessor
 import time
@@ -32,14 +33,12 @@ def init_generation(nodeamount,populationsize):
 S I M U L A T I O N
 """
 def phenotype_generator(G_,gen,population_size):
-    G_ = copy.deepcopy(G)
     phenotype_temp = []
     phenotype_ = [[]]*population_size
     fs = 50000
     for i in range(population_size):
         time = 0
         G_.add_nodes_from(gen[i])
-        print(G_.nodes.data())
         #print("i: ",i,"nodes data: ",G_.nodes.data())
         '''G_.nodes[1]["spike"] = 1
         G_.nodes[2]["spike"] = 1
@@ -131,24 +130,23 @@ def phenotype_generator(G_,gen,population_size):
 """
 M U T A T I O N
 """
-def mutation(graph,gen,best_match,node_amount,population_size):
-    mutated_graph = copy.deepcopy(graph)
+def mutation(gen,best_match,node_amount,population_size):
     mutated_population = [[]]*population_size
     for i in range(population_size):
-        mutated_graph.add_nodes_from(gen[best_match])
+        best_individual = copy.deepcopy(gen[best_match])
         for j in range(node_amount):
-            for k in range(len(mutated_graph.nodes[i])):
-                #print("length: ",len(graph.nodes[i]))
+            for k in range(len(best_individual[j][1])):
                 if r.random() <= 0.9:
                     if k == 0:
-                        mutated_graph.nodes[i]["decay constant"] = r.uniform(decay_min,decay_max)
+                        best_individual[j][1]["decay constant"] = r.uniform(decay_min,decay_max)
                     elif k == 1:
-                        mutated_graph.nodes[i]["threshold"] = r.uniform(threshold_min,threshold_max)
+                        best_individual[j][1]["threshold"] = r.uniform(threshold_min,threshold_max)
                     elif k == 2:
-                        mutated_graph.nodes[i]["prob selffire"] = r.uniform(prob_selffire_min,prob_selffire_max)
+                        best_individual[j][1]["prob selffire"] = r.uniform(prob_selffire_min,prob_selffire_max)
                     elif k == 3:
-                        mutated_graph.nodes[i]["obstruction period"] = r.uniform(obstruction_period_min,obstruction_period_max)
-        mutated_population[i] = mutated_graph # Does this return the wrong thing?
+                        best_individual[j][1]["obstruction period"] = r.uniform(obstruction_period_min,obstruction_period_max)
+        mutated_population[i] = best_individual
+        #print("mutated_population[0]: ",mutated_population[0])
     return mutated_population
 
 
@@ -161,11 +159,10 @@ G.nodes[2]['rest'] = 0.3
 print(G.nodes.data())
 '''
 
-"""
-P R O G R A M
-"""
+
 def network_initialise():
-    print("Initialising single process version")
+    print("name: ",__name__)
+    print("Network initalising:")
     print("Electrode array consists of 60 electrodes")
     node_amount = input("How many nodes should be generated in the network?:")
     population_size = input("How many individuals should comprise the population?:")
@@ -184,64 +181,70 @@ def network_initialise():
     G_.add_weighted_edges_from(edge_list)
     return int(node_amount), int(population_size), G_, edge_list
 
+"""
+P R O G R A M
+"""
 
-# Initialise
-t0 = time.perf_counter()
-print("Network initalising:")
-#nodeamount, populationsize, G, edgelist = network_initialise()
-nodeamount, populationsize, G, edgelist = multiprocessor.network_initialise()
-#multiprocessor.multi_network_initialise()
+if __name__ == '__main__':
+    # Initialise
+    t0 = time.perf_counter()
 
-# Update
-
-# could be declared in initialise() and returned
-decay_min = 0.001
-decay_max = 0.1
-threshold_min = 2
-threshold_max = 3
-prob_selffire_min = 0.001
-prob_selffire_max = 0.01
-obstruction_period_min = 0.005
-obstruction_period_max = 0.05
-
-
-generation_nr = 0
-fitnesscore = 900000
-#generation = init_generation(nodeamount,populationsize)
-#print("type: ",type(generation),"Generation[0]: ", generation[0])
-
-while fitnesscore > 10000:
-    t1 = time.perf_counter()
+    ###
+    decay_min = 0.001
+    decay_max = 0.1
+    threshold_min = 2
+    threshold_max = 3
+    prob_selffire_min = 0.001
+    prob_selffire_max = 0.01
+    obstruction_period_min = 0.005
+    obstruction_period_max = 0.05
+    # could be declared in initialise() and returned
+    ###
     
-    phenotype = phenotype_generator(G,generation,populationsize)
-    #phenotype = multiprocessor.multiprocessor(G,generation,populationsize)
-    t2 = time.perf_counter()
+    nodeamount, populationsize, G, edgelist = network_initialise()
+    generation = init_generation(nodeamount,populationsize)
     
-    bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
-    
-    if generation_nr == 0:
-        print("Initial generation")
-    else:
-        print("Generation: ",generation_nr)
-    print("Population size: ",populationsize)
-    print("Phenotype generation finished in "+str(round(t2-t1,2))+" seconds")
-    print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
-    
-    generation = mutation(G,generation,bestmatch,nodeamount,populationsize)
-    generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
+    # Update
 
-    generation_nr += 1
-t3 = time.perf_counter()
-print("total elapsed time: ",round(t3-t2,2))
-f = open("Data\Best_spikes.txt", "w")
-for element in phenotype[bestmatch]:
-    f.write(str(element[0]) + " " + str(element[1]) + '\n')
-f.close()
+    generation_nr = 0
+    fitnesscore = 900000
+
+    while fitnesscore > 10000:
+        t1 = time.perf_counter()
+    
+    
+        #phenotype = phenotype_generator(G,generation,populationsize)
+        args = multiprocessor.multi_variables(G,generation,populationsize)
+        phenotype = multiprocessor.multiprocessor(args)
+        #print("generation_nr: ",generation_nr,"name: ",__name__)
+        
+        t2 = time.perf_counter()
+        bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
+    
+        if generation_nr == 0:
+            print("Initial generation")
+        else:
+            print("Generation: ",generation_nr)
+        print("Population size: ",populationsize)
+        print("Phenotype generation finished in "+str(round(t2-t1,2))+" seconds")
+        print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
+    
+        generation = mutation(generation,bestmatch,nodeamount,populationsize)
+        #generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
+
+        generation_nr += 1
+        #time.sleep(1)
+
+    t3 = time.perf_counter()
+    print("total elapsed time: ",round(t3-t2,2))
+    f = open("Data\Best_spikes.txt", "w")
+    for element in phenotype[bestmatch]:
+        f.write(str(element[0]) + " " + str(element[1]) + '\n')
+    f.close()
  
-"""
+    """
 
-- Apply number of active electrodes in fitness function?
-- Fix weights
-- Fix teamviewer
+    - Apply number of active electrodes in fitness function?
+    - Fix weights
 
-"""
+    """
