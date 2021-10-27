@@ -13,6 +13,8 @@ spike_list_time = load.get_time()
 
 def best_fit(sim_output):
     diff = abs(len(spike_list_fasit) - len(sim_output))
+    diff += use_electrodes(sim_output)
+
     return diff
 
 def pick_best_rule_set(set_of_rules):
@@ -38,17 +40,46 @@ def part_list_to_time_only(list):
     for i in range(len(list)):
         for j in range(len(list[i])):
             #print(f"halåå{liste[i][j][0]}")
-            time.append([list[i][j][0]])
+            time.append(list[i][j][0])
         tider = copy.deepcopy(time)
         time_each_rule.append(tider)
         time.clear()
     return time_each_rule
+
+def part_list_to_sorted_electrodes_only(list):
+    electrodes_temp = []
+    electrodes_each_rule = []
+    #print(f"liste er {len(liste)} lang") 
+    for i in range(len(list)):
+        for j in range(len(list[i])):
+            #print(f"halåå{liste[i][j][0]}")
+            electrodes_temp.append(list[i][j][1])
+        electrodes_temp.sort()
+        electrodes = copy.deepcopy(electrodes_temp)
+        electrodes_each_rule.append(electrodes)
+        electrodes.clear()
+    return electrodes_each_rule
+
+def use_electrodes(list_of_electrodes):
+    score = 0
+    temp_list = copy.deepcopy(list_of_electrodes)
+    for i in range(64):
+        try:
+            index = temp_list.index(i)
+            del temp_list[:index]
+            #print(index)
+        except ValueError:
+            score += 5000
+            #print(f"inneholder ikke tallet {i}")
+    return score
 
 def arrayWideSpikeDetectionRate(time,interval):
     t0 = 0 
     t1 = time[:]
     f = []
     #interval = 0.1
+    #print("det går denne gangen")
+    #print(time)
     spikes = 0   # number of spikes
     for element in range(len(time)):
         if t1[element] - t0 <= interval:
@@ -63,10 +94,29 @@ def arrayWideSpikeDetectionRate(time,interval):
 def get_fitness(list_of_times,interval):
     freq = []
     fasit_freq = arrayWideSpikeDetectionRate(spike_list_time,interval)
+    #print("fasit ingen problem")
     for i in range(len(list_of_times)):
+        #print(f"gang nr {i} starter")
         freq.append(arrayWideSpikeDetectionRate(list_of_times[i],interval))
-    
+        #print(f"gang nr {i} slutter")
     return(freq, fasit_freq)
+
+
+def freq_fit(list_of_times,interval):
+    fitness_score = 0
+    best_score = 10000000000
+    index_best_rule = 0
+    spike_rule_time, real_spike_time = get_fitness(list_of_times,interval)
+    for rule in spike_rule_time:
+        for f in range(len(real_spike_time)):
+            fitness_score += abs(real_spike_time[f]-spike_rule_time[rule][f])
+        if fitness_score < best_score:
+            best_score = fitness_score
+            index_best_rule = rule
+        else:
+            fitness_score = 0
+    return index_best_rule,best_score
+        
 
 
 

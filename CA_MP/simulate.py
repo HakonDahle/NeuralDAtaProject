@@ -1,8 +1,13 @@
 
+from multiprocessing.context import Process
+from multiprocessing import Pool
+import os
 from pylab import *
 import random as r
 import evolution as ev
 import copy
+from functools import partial
+
 import concurrent.futures
 import numpy as np
 
@@ -10,11 +15,11 @@ import numpy as np
 #Her kan du endre tiden i update() time+= xx, den står nå på 0.01, skal vel stå på 0.00002
 #i simulate() må du endre while time < 100 til det den skal stå på.
 
-width = 5
-height = 5
+width = 8
+height = 8
 initProb = 0.2 #sannsynlighet for å starte med spike
-sec_to_run = 10
-update_freq = 1
+sec_to_run = 1800
+update_freq = 0.01
 t = 0
 
 
@@ -84,8 +89,10 @@ def update_MP(rule_set,time,config,nextConfig):
     time += update_freq
     electrode_number = 0
     spikes_info = []
-    #print(f"dette er config: {config}")
-    #print(f"den er: {np.ndim(config)} dimensjoner")
+    '''    print("update_MP:")
+    print(f"dette er config: {config}")
+    print(f"den er: {np.ndim(config)} dimensjoner")
+    print("----------------")'''
 
     for x in range(width):
         for y in range(height):
@@ -118,9 +125,17 @@ def update_MP(rule_set,time,config,nextConfig):
 
 def simulate_MP(list_of_rule_sets):
     global time, config, nextConfig
+    #args = encapsulate_args(list_of_rule_sets,config,nextConfig)
 
-    initialize()
-    print(f"list of rule sets er {len(list_of_rule_sets)} lang")
+    '''    print("simulate_MP:")
+    print(f"rule_set: {args[0]}")
+    print("-------------------")
+    print(f"config: {args[1]}")
+    print("-------------------")
+    print(f"nxtConfig: {args[2]}")
+    print("-------------------")'''
+    #initialize()
+    #print(f"list of rule sets er {len(list_of_rule_sets)} lang")
     #print(config)
     #print(f"den er: {np.ndim(config)} dimensjoner")
     '''with concurrent.futures.ProcessPoolExecutor() as executor:
@@ -128,7 +143,7 @@ def simulate_MP(list_of_rule_sets):
         print(f"list_o_s_r_n er av type {type(list_of_spikes_rule_n)}")
         return_list = list(list_of_spikes_rule_n)
         print(f"return list er {type(return_list)}")'''
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    '''with concurrent.futures.ProcessPoolExecutor() as executor:
         for rules in range(len(list_of_rule_sets)):
             future = executor.submit(sim_MP(list_of_rule_sets[rules],config,nextConfig))
             kopi = copy.deepcopy(future)
@@ -137,11 +152,44 @@ def simulate_MP(list_of_rule_sets):
         #list_of_spikes_rule_n = executor.map(sim_MP,list_of_rule_sets,config,nextConfig)
         liste = list_of_spikes_rule_n
         #print(f"lista er av typen {type(liste)} og er {len(liste)} lang")
-        return_list = liste
-    return return_list   #concurrent.futures.Future.result
+        return_list = liste'''
+    
 
-def sim_MP(rule_set,config,nextConfig):
+
+    '''    process_list = []
+    return_list = []
+    for rule in list_of_rule_sets:
+        p = Process(target=sim_MP,args=(list_of_rule_sets[rule],config,nextConfig))
+        p.start()
+        process_list.append(p)
+
+    for process in process_list:
+        process.join()
+        return_list.append(process.value())    
+    
+
+    return return_list   #concurrent.futures.Future.result'''
+    part_sim_MP = partial(sim_MP,config=config,nextConfig=nextConfig)
+
+    with Pool(os.cpu_count()-1) as p: #Pool(2) as p:
+        results = p.map(part_sim_MP,list_of_rule_sets)
+        p.close()
+    return results
+
+def sim_MP(rule_set,config,nextConfig): #list_of_rule_set_config_and_nextConfig
     time = 0
+    #rule_set = list_of_rule_set_config_and_nextConfig[0]
+    #config = list_of_rule_set_config_and_nextConfig[1]
+    #nextConfig = list_of_rule_set_config_and_nextConfig[2]
+
+    '''print("sim_MP:")
+    print(f"rule_set: {rule_set}")
+    print("-------------------")
+    print(f"config: {config}")
+    print("-------------------")
+    print(f"nxtConfig: {nextConfig}")
+    print("-------------------")'''
+
     #print(config)
     #print(f"Nå er config : {np.ndim(config)} dimensjoner")
     while time < sec_to_run:
@@ -152,18 +200,43 @@ def sim_MP(rule_set,config,nextConfig):
         for j in range(len(copy_spikes)):
             spikes_list.append([time,copy_spikes[j]])
         spikes_info.clear()
+    '''print("sim_MP:")
+    print(f"rule_set: {rule_set}")
+    print("-------------------")
+    print(f"config: {config}")
+    print("-------------------")
+    print(f"nxtConfig: {nextConfig}")
+    print("-------------------")'''
 
     #spikes_list_copy = copy.deepcopy(spikes_list)
     #spikes_list.clear()
     return spikes_list
     
+def encapsulate_args(rules,config,nextConfig):
+    encapsulated_args = []
+    config_list = []
+    nextConfig_list = []
+    encapsulated_args.append(rules)
+    for i in range(len(rules)):
+        config_list.append(config)
+    encapsulated_args.append(config_list)
+    for i in range(len(rules)):
+        nextConfig_list.append(nextConfig)
+    encapsulated_args.append(nextConfig_list)
+    numpy_array = np.array(encapsulated_args)
+    transposed = numpy_array.T
+    '''print("--------------")
+    print(f"numpy array: {transposed}")
+    print("-------------")'''
+    #print(f"nextConfig er: {encapsulated_args}")
+    return transposed
 
 
 
 def simulate(list_of_rule_sets):
     global time, config, nextConfig, spikes_info
     
-    initialize()
+    #initialize()
 
     for i in range(len(list_of_rule_sets)):
         while time < sec_to_run:
