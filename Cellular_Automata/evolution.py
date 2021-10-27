@@ -50,6 +50,7 @@ if __name__ == '__main__':
     generasjon = 0
     list_of_rule_sets = create_list_of_n_rules(antall_regler,256)
 
+    sim.initialize()
 
     fitness_score = 1000000000 # Setter den høyt sånn at den ikke har noe å si i starten, vil ha den så lav som mulig.
     sim_output = sim.simulate(list_of_rule_sets) #Her sender vi inn reglene, og får tilbake spikes

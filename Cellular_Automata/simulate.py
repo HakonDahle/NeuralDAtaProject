@@ -39,7 +39,7 @@ def initialize():
 def update(rule_set):
     global time, config, nextConfig, spikes_info
 
-    time += 0.1
+    time += 0.0002
     
     electrode_number = 0
     spikes_info = []
@@ -79,7 +79,7 @@ def update(rule_set):
 def simulate(list_of_rule_sets):
     global time, config, nextConfig, spikes_info
     
-    initialize()
+   # initialize()
 
     for i in range(len(list_of_rule_sets)):
         while time < 1800:
