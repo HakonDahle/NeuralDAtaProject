@@ -1,14 +1,8 @@
-
-from multiprocessing.context import Process
 from multiprocessing import Pool
 import os
 from pylab import *
-import random as r
-import evolution as ev
 import copy
 from functools import partial
-
-import concurrent.futures
 import numpy as np
 
 

@@ -8,6 +8,9 @@ from multiprocessing import Pool
 import copy
 #import tester as t
 
+antall_regler = 7
+ønsket_fitness_score = 15000
+
 #her under kan du endre sannsynligheten for hvordan reglene skal se ut,
 #har satt det som 20% sannsynlig å få en 1'er. Dette kan justeres
 
