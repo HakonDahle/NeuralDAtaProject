@@ -4,7 +4,20 @@ import copy
 import multiprocessing
 from functools import partial
 import time
+from multiprocessing import Pool
+import os
 
+var2 = [[1,2,3]]
+def testing(liste):
+    a = liste[0]
+    b = liste[1]
+    return a,b
+if __name__ == '__main__':
+
+    with Pool(5) as p: #Pool(2) as p:
+        results = p.map(testing,var2)
+        p.close()
+    print(results)
 
 '''liste = [1,2,3]
 var1 = 56

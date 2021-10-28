@@ -1,5 +1,7 @@
 import load_data as load
 import copy
+from multiprocessing import Pool
+import os
 
 
 # Calculates fire rate for the whole electrode array (spikes/t)
@@ -19,18 +21,28 @@ def best_fit(sim_output):
 
 def pick_best_rule_set(set_of_rules):
     score = 10000000000
-    differanse = 0
+    #differanse = 0
     beste_regel = 0
-    for i in range(len(set_of_rules)):
+
+    with Pool(os.cpu_count()-1) as p: #Pool(2) as p:
+        results = p.map(best_fit,set_of_rules)
+        p.close()
+    '''print("xxxxxxxxxxxxxxxxxxxxxxx")
+    print(f"pool-results: {results}")'''
+    for i in range(len(results)): #result in results:
         
         index = i
         #print(f"antall spikes på regel {i} er {len(set_of_rules[i])}")
-        differanse = best_fit(set_of_rules[i])
+        #differanse = best_fit(set_of_rules[i])
         #print(f"differansen på regel {i} er {differanse}")
-        if differanse < score:
-            score = differanse
+        if results[i] < score:
+            score = results[i]
             beste_regel = index
             #print(f"score er foreløbig {score}")
+
+    '''print(f"beste regel: {beste_regel}, score: {score}")
+    print("xxxxxxxxxxxxxxxxxxxxxxx")'''
+
     return beste_regel, score
 
 def part_list_to_time_only(list):
