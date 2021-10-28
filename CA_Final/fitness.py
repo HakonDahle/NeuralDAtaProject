@@ -97,8 +97,6 @@ def part_list_to_sorted_electrodes_only(list):
         electrodes.clear()
     return electrodes_each_rule
 
-
-
 def arrayWideSpikeDetectionRate(time,interval):
     t0 = 0 
     t1 = time[:]
@@ -119,7 +117,6 @@ def get_fitness(list_of_times,interval):
     for i in range(len(list_of_times)):
         freq.append(arrayWideSpikeDetectionRate(list_of_times[i],interval))
     return(freq, fasit_freq)
-
 
 def freq_fit(list_of_times,interval):
     fitness_score = 0

@@ -51,8 +51,7 @@ def create_mutated_list_of_rules(rule_table_to_mutate,number_of_rule_tables):
 
     return mutated_list_of_rules
 
-    
-    
+       
 '''
 Main method - setting up the grid before entering while-loop which runs
 until preferred fitness score is reached.
