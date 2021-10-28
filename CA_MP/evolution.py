@@ -82,6 +82,7 @@ if __name__ == '__main__':
     print(f'Mutation finished in {t22-t11} seconds')
     print(f"beste regel er denne: {beste_regel}")  #disse printene kan du endre på hvis du ikke vil se de underveis
     print(f"fitness score er {fitness_score}")
+    #print(f"Det er {unused_electrodes} elektroder som ikke spiker")
     print(f"Dette er generasjon nummer {generasjon}")
     #print(f"sim output er en {type(sim_output)}")
     
@@ -102,9 +103,7 @@ if __name__ == '__main__':
     mutert_regelliste = create_mutated_list_of_rules(list_of_rule_sets[beste_regel],antall_regler)
     #print(f"mutert_regelliste er {len(mutert_regelliste)} lang")
     if mutert_regelliste[0] == mutert_regelliste[1]:
-        print("Liste 0 og 1 er like")
-    t2 = time.perf_counter()
-    print(f'Finished in {t2-t1} seconds')    
+        print("Liste 0 og 1 er like") 
 
 
     while fitness_score > ønsket_fitness_score: 
@@ -121,6 +120,7 @@ if __name__ == '__main__':
         generasjon += 1
         print(f"beste regel er denne: {beste_regel}")
         print(f"fitness score er {fitness_score}")
+        #print(f"Det er {unused_electrodes} elektroder som ikke spiker")
         print(f"Dette er generasjon nummer {generasjon}")
         if fitness_score < ønsket_fitness_score:
             break # må hindre den i å slette sim_output siste gangen sånn at vi får lagra den til fil.

@@ -19,7 +19,7 @@ width = 8
 height = 8
 initProb = 0.2 #sannsynlighet for å starte med spike
 sec_to_run = 1800
-update_freq = 0.01
+update_freq = 0.1
 t = 0
 
 
