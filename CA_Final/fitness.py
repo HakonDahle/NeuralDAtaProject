@@ -22,7 +22,7 @@ def pick_best_rule_set(list_of_spikes):
     score = 10000000000
     best_rule = 0
 
-    with Pool(os.cpu_count()-1) as p:        #Making the best_fit method run at the same time, on different cpu's
+    with Pool(4) as p: #os.cpu_count()-1       #Making the best_fit method run at the same time, on different cpu's
         results = p.map(best_fit,list_of_spikes)
         p.close()
 

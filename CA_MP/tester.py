@@ -6,8 +6,45 @@ from functools import partial
 import time
 from multiprocessing import Pool
 import os
+from datetime import datetime
 
-var2 = [[1,2,3]]
+
+liste = []
+for i in range(100):
+    liste.append(r.randint(0,63))
+
+f = open(f"Fitness_score.txt", "w")
+for element in liste:
+    f.write(str(element) + '\n')
+f.close()
+'''index = 5
+now = datetime.now()
+ 
+print("now =", now)
+
+# dd/mm/YY H:M:S
+dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
+print("date and time =", dt_string)
+
+full_path = 'C:\\NeuralDataProject\\NeuralDAtaProject\\CA_Final\\Test_Results'
+full_path_slash = 'C:/NeuralDataProject/NeuralDAtaProject/CA_Final/Test_Results'
+path = ("\CA_Final\Test_Results")
+
+print(f"{path}\\{dt_string}")
+os.makedirs(f'{full_path_slash}/{dt_string}')
+
+f = open(f"{full_path_slash}/{dt_string}/test{index}.txt", "w")
+f.write("test")
+f.close()
+
+'''
+
+
+'''os.makedirs(f"{path}\\{dt_string}")
+filepath = os.path.join('c:/your/full/path', 'filename')'''
+
+
+'''var2 = [[1,2,3]]
 def testing(liste):
     a = liste[0]
     b = liste[1]
@@ -18,7 +55,7 @@ if __name__ == '__main__':
         results = p.map(testing,var2)
         p.close()
     print(results)
-
+'''
 '''liste = [1,2,3]
 var1 = 56
 var2 = [[1,2,3],[10,11,12]]
