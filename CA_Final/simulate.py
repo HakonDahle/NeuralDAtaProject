@@ -16,8 +16,8 @@ It is the multiprocessing one that is the most suitable for this process.
 width = 8
 height = 8
 initProb = 0.2 #probability for electrode in grid to start active
-sec_to_run = 180
-update_freq = 1
+sec_to_run = 1800
+update_freq = 0.001
 t = 0
 
 

@@ -64,7 +64,7 @@ Can be run without multiprocessing, then you must change simulate_MP to simulate
 
 
 if __name__ == '__main__':
-    for i in range(10):
+    for i in range(100):
         now = datetime.now()
         dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
 
