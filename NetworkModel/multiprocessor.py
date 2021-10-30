@@ -10,13 +10,17 @@ def multiprocessor(args):
     G_ = args[0][1]
     arguments = [[]]*population_size
     gen_temp = []
+    edge_temp = []
     for i in range(len(args)):
         population_size = args[i][2]
         G_ = args[i][1]
         gen_temp.append(args[i][0])
+        edge_temp.append(args[i][3])
         gen = copy.deepcopy(gen_temp)
-        arguments[i] = gen,G_,population_size
+        edge = copy.deepcopy(edge_temp)
+        arguments[i] = gen,G_,population_size, edge
         gen_temp.clear()
+        edge_temp.clear()
         #print("arguments: ",arguments)
     
     with Pool(os.cpu_count()-1) as p:
@@ -24,10 +28,10 @@ def multiprocessor(args):
         p.close()
     return results
 
-def multi_variables(G_,gen,population_size):
+def multi_variables(G_,gen,population_size,edge_list):
     args = []
     for i in range(population_size):
-        args.append([gen[i],G_,population_size])
+        args.append([gen[i],G_,population_size,edge_list[i]])
     return args
 
 
@@ -38,15 +42,22 @@ def multi_phenotype_generator(params):
         population_size = params[2] # this can be removed
         G_ = params[1]
         gen = params[0]
+        edges = params[3]
+        '''print("nodes: ",gen,"\n")
+        print("gen[0]",gen[0],"\n\n")
+        print("edges: ",edges,"\n")
+        print("edges[0]: ",edges[0])'''
         phenotype_ = []
-        fs = 50000
+        fs = 1000
         time = 0
         G_.add_nodes_from(gen[0])
+        G_.add_weighted_edges_from(edges[0])
         selffire_count = 0
         potential_count = 0 
-        time_limit = 60
+        time_limit = 1800
         sec = 0
         time_control = 0
+        
         while time < time_limit:
             for nodenr in range(len(gen[0])):
                 #print("1",G_.nodes[nodenr])
@@ -86,11 +97,11 @@ def multi_phenotype_generator(params):
                                         for nbr, eattr in nbrs.items():
                                             if (G_.nodes[nbr]["prev spike"] == 1) and (G_.nodes[nodenr]["spike"] == 1) and (G_.edges[nodenr,nbr]["weight"] < 1):
                                                 #print("nodenr: ",nodenr,"nbr: ",nbr,"G_.edges[nodenr,nbr][ weight]: ",G_.edges[nodenr,nbr]["weight"])
-                                                G_.edges[nodenr,nbr]["weight"] += 0.1
+                                                G_.edges[nodenr,nbr]["weight"] += 0.05
                                                 #print("G_.edges[nodenr,nbr][ weight]: ",G_.edges[nodenr,nbr]["weight"])
                                     #print("SINGLE: i: ",i,"node: ",nodenr,"nbrs: ",nbrs,"nbr: ",nbr,"fire_wire: ", fire_wire)             
                                 #print("nodenr: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr: ",nbr,"nbr_prev_spike: ", G_.nodes[nbr]["prev spike"])
-                        if self_prob <= G_.nodes[nodenr]["prob selffire"]:
+                        if (self_prob <= G_.nodes[nodenr]["prob selffire"]) and (G_.nodes[nodenr]["spike"] == 0):
                             G_.nodes[nodenr]["spike"] = 1
                             phenotype_.append([float(time),nodenr])
                             selffire_count += 1       
@@ -111,8 +122,8 @@ def multi_phenotype_generator(params):
 
             time += 1/fs
             
-            if (time - time_control) > 1:
-                sec += 1
+            if (time - time_control) > 120.01:
+                sec += 120
                 time_control = time
                 print(sec," seconds has passed.")
             '''
@@ -140,7 +151,8 @@ def multi_phenotype_generator(params):
             plt.show()'''
     #print("selffire_count: ",selffire_count, "potential_count: ",potential_count)
     #print("G_.edges.data()",G_.edges.data('weight'))
-    print("Process terminating")
+    #print("Process terminating")
+    print("Amount of selfspikes: ",selffire_count, "Amount of potential spikes: ", potential_count)
     return phenotype_
 
     '''elif G_.nodes[nodenr]["exhausted"] == 0:

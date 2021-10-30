@@ -41,9 +41,10 @@ def electrode_list(activeElectrodes,time):    # Returns a list of timestamps org
     
     return temp_array   
 
-colors1 = ['C{}'.format(i) for i in range(64)]  # Creates 64 different colors, one for each electrode
+colors1 = ['C{}'.format(i) for i in range(60)]  # Creates 64 different colors, one for each electrode
 
 electrodes = electrode_list(data,t) # Creates the list of electrodes
 
-plt.eventplot(electrodes, colors=colors1)   # Creates the raster plot
+#plt.eventplot(electrodes, colors=colors1,linestyles='dotted')   # Creates the raster plot
+plt.scatter(t,data,s=0.5,marker=",",cmap=colors1)
 plt.show()  # displays the rasterplot

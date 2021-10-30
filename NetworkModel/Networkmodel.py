@@ -2,6 +2,7 @@ import random as r
 import copy
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from networkx.classes.function import freeze
 from numpy import errstate
 import load_data
@@ -30,16 +31,35 @@ def init_generation(nodeamount,populationsize):
     #print("node_list[0]: ",node_list[0])
     return node_list
 
+def init_connection(populationsize):
+    population_size = populationsize
+    
+    edge_list = [[]]*int(population_size)
+    for i in range(len(edge_list)):
+        weight_factor = r.uniform(0.1,0.5)
+        edge_list[i] = [(0,1,weight_factor),(0,7,weight_factor),(1,2,weight_factor),(1,8,weight_factor),(2,3,weight_factor),(2,9,weight_factor),(3,4,weight_factor),(3,10,weight_factor),(4,5,weight_factor),(4,11,weight_factor),(5,12,weight_factor),
+                (6,7,weight_factor),(6,14,weight_factor),(7,8,weight_factor),(7,15,weight_factor),(8,9,weight_factor),(8,16,weight_factor),(9,10,weight_factor),(9,17,weight_factor),(10,11,weight_factor),(10,18,weight_factor),(11,12,weight_factor),(11,19,weight_factor),(12,13,weight_factor),(12,20,weight_factor),(13,21,weight_factor),
+                (14,15,weight_factor),(14,22,weight_factor),(15,16,weight_factor),(15,23,weight_factor),(16,17,weight_factor),(16,24,weight_factor),(17,18,weight_factor),(17,25,weight_factor),(18,19,weight_factor),(18,26,weight_factor),(19,20,weight_factor),(19,27,weight_factor),(20,21,weight_factor),(20,28,weight_factor),(21,29,weight_factor),
+                (22,23,weight_factor),(22,30,weight_factor),(23,24,weight_factor),(23,31,weight_factor),(24,25,weight_factor),(24,32,weight_factor),(25,26,weight_factor),(25,33,weight_factor),(26,27,weight_factor),(26,34,weight_factor),(27,28,weight_factor),(27,35,weight_factor),(28,29,weight_factor),(28,36,weight_factor),(29,37,weight_factor),
+                (30,31,weight_factor),(30,38,weight_factor),(31,32,weight_factor),(31,39,weight_factor),(32,33,weight_factor),(32,40,weight_factor),(33,34,weight_factor),(33,41,weight_factor),(34,35,weight_factor),(34,42,weight_factor),(35,36,weight_factor),(35,43,weight_factor),(36,37,weight_factor),(36,44,weight_factor),(37,45,weight_factor),
+                (38,39,weight_factor),(38,46,weight_factor),(39,40,weight_factor),(39,47,weight_factor),(40,41,weight_factor),(40,48,weight_factor),(41,42,weight_factor),(41,49,weight_factor),(42,43,weight_factor),(42,50,weight_factor),(43,44,weight_factor),(43,51,weight_factor),(44,45,weight_factor),(44,52,weight_factor),(45,53,weight_factor),
+                (46,47,weight_factor),(47,48,weight_factor),(47,54,weight_factor),(48,49,weight_factor),(48,55,weight_factor),(49,50,weight_factor),(49,56,weight_factor),(50,51,weight_factor),(50,57,weight_factor),(51,52,weight_factor),(51,58,weight_factor),(52,53,weight_factor),(52,59,weight_factor),
+                (54,55,weight_factor),(55,56,weight_factor),(56,57,weight_factor),(57,58,weight_factor),(58,59,weight_factor)]
+    '''print("Edgelist[0]: ",edge_list[0])
+    print("Edgelist[1]: ",edge_list[1])
+    print("Edgelist[2]: ",edge_list[2])'''
+    return edge_list
 """
 S I M U L A T I O N
 """
-def phenotype_generator(G_,gen,population_size):
+def phenotype_generator(G_,gen,edge_list,population_size):
     phenotype_temp = []
     phenotype_ = [[]]*population_size
-    fs = 50000
+    fs = 57
     for i in range(population_size):
         time = 0
         G_.add_nodes_from(gen[i])
+        G_.add_weighted_edges_from(edge_list[i])
         selffire_count = 0
         potential_count = 0
         #print("i: ",i,"nodes data: ",G_.nodes.data())
@@ -52,17 +72,18 @@ def phenotype_generator(G_,gen,population_size):
             for nodenr in range(len(gen[i])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
-                fire_wire = []
                 if G_.nodes[nodenr]["potential"] > 0:   # Checks if the node has a voltage potential to decrease it with the decay constant
                     #print("1: potential >0:", G_.nodes[nodenr]["potential"])
                     G_.nodes[nodenr]["potential"] -= G_.nodes[nodenr]["decay constant"]
                     #print("2: potential >0:", G_.nodes[nodenr]["potential"])
-                elif G_.nodes[nodenr]["potential"] < 0:
-                    G_.nodes[nodenr]["potential"] = 0
+                    if G_.nodes[nodenr]["potential"] < 0:
+                        G_.nodes[nodenr]["potential"] = 0
                     #print("potential <0:", G_.nodes[nodenr]["potential"])
                 
                 if G_.nodes[nodenr]["exhausted"] > 0:   # Exhausted nodes are inactive for a period of time
                     G_.nodes[nodenr]["exhausted"] -= 1/fs
+                    if G_.nodes[nodenr]["exhausted"] < 0:
+                        G_.nodes[nodenr]["exhausted"] = 0
                     #print("exhausted: ",G_.nodes[nodenr]["exhausted"])
                 
                 elif G_.nodes[nodenr]["exhausted"] == 0:
@@ -80,6 +101,7 @@ def phenotype_generator(G_,gen,population_size):
                                 G_.nodes[nodenr]["spike"] = 1
                                 phenotype_temp.append([float(time),nodenr])
                                 potential_count += 1  
+                                
                                 for k, nbrs in G_.adj.items():  # Checks the neighbours for spikes and multiplies it with the weighted edge
                                     if k == nodenr:
                                         #print("G_.adj[nodenr]: ",G_.adj[nodenr])
@@ -97,8 +119,7 @@ def phenotype_generator(G_,gen,population_size):
                             selffire_count += 1       
                     #print("time: ",time, "potential: ", G_.nodes[nodenr]["potential"],"threshold: ",G_.nodes[nodenr]["threshold"], "self_prob: ",self_prob,"selffire: ",G_.nodes[nodenr]["prob selffire"])
                     #print("i: ",i,"phenotype_temp: ",phenotype_temp)
-                elif G_.nodes[nodenr]["exhausted"] < 0:
-                    G_.nodes[nodenr]["exhausted"] = 0
+
                 
                 #print("node: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr_spike: ", G_.nodes[nbr]["spike"])
                 #print("2",G_.nodes[nodenr])
@@ -107,7 +128,6 @@ def phenotype_generator(G_,gen,population_size):
                     G_.nodes[nodenr]["spike"] = 0
                     G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
                     G_.nodes[nodenr]["potential"] = 0
-                    G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
 
             time += 1/fs
                 
@@ -160,15 +180,39 @@ def mutation(gen,best_match,node_amount,population_size):
         #print("best individual:                                    ",best_individual)
         for j in range(node_amount):
             for k in range(len(best_individual[j][1])):
-                if r.random() <= 0.0001:
+                if r.random() <= 0.01:
                     if k == 0:
-                        best_individual[j][1]["decay constant"] = r.uniform(decay_min,decay_max)
+                        #print("1: best_individual[j][1][decay constant]",best_individual[j][1]["decay constant"])
+                        best_individual[j][1]["decay constant"] += r.uniform(-decay_percent_of_max,decay_percent_of_max)
+                        if best_individual[j][1]["decay constant"] < decay_min:
+                            best_individual[j][1]["decay constant"] = decay_min
+                        elif best_individual[j][1]["decay constant"] > decay_max:
+                            best_individual[j][1]["decay constant"] = decay_max
+                        #print("2: best_individual[j][1][decay constant]",best_individual[j][1]["decay constant"])
                     elif k == 1:
-                        best_individual[j][1]["threshold"] = 1 #r.uniform(threshold_min,threshold_max)
+                        #print("1: best_individual[j][1][threshold]",best_individual[j][1]["threshold"])
+                        best_individual[j][1]["threshold"] +=  r.uniform(-threshold_percent_of_max,threshold_percent_of_max)
+                        if best_individual[j][1]["threshold"] < threshold_min:
+                            best_individual[j][1]["threshold"] = threshold_min
+                        elif best_individual[j][1]["threshold"] > threshold_max:
+                            best_individual[j][1]["threshold"] = threshold_max
+                        #print("2: best_individual[j][1][threshold]",best_individual[j][1]["threshold"])
                     elif k == 2:
-                        best_individual[j][1]["prob selffire"] = r.uniform(prob_selffire_min,prob_selffire_max)
+                        #print("1: best_individual[j][1][prob selffire]",best_individual[j][1]["prob selffire"])
+                        best_individual[j][1]["prob selffire"] += r.uniform(-prob_selffire_percent_of_max,prob_selffire_percent_of_max)
+                        if best_individual[j][1]["prob selffire"] < prob_selffire_min:
+                            best_individual[j][1]["prob selffire"] = prob_selffire_min
+                        elif best_individual[j][1]["prob selffire"] > prob_selffire_max:
+                            best_individual[j][1]["prob selffire"] = prob_selffire_max
+                        #print("2: best_individual[j][1][prob selffire]",best_individual[j][1]["prob selffire"])
                     elif k == 3:
-                        best_individual[j][1]["obstruction period"] = r.uniform(obstruction_period_min,obstruction_period_max)
+                        #print("1: best_individual[j][1][obstruction period]",best_individual[j][1]["obstruction period"])
+                        best_individual[j][1]["obstruction period"] += r.uniform(-obstruction_period_percent_of_max,obstruction_period_percent_of_max)
+                        if best_individual[j][1]["obstruction period"] < obstruction_period_min:
+                            best_individual[j][1]["obstruction period"] = obstruction_period_min
+                        elif best_individual[j][1]["obstruction period"] > obstruction_period_max:
+                            best_individual[j][1]["obstruction period"] = obstruction_period_max
+                        #print("2: best_individual[j][1][obstruction period]",best_individual[j][1]["obstruction period"])
         mutated_population[i] = best_individual
         #print("Mutated population[0]                          : ",mutated_population[0])
         #print("Mutated population[1]                          : ",mutated_population[1])
@@ -191,11 +235,14 @@ def network_initialise():
     print("name: ",__name__)
     print("Network initalising:")
     print("Electrode array consists of 60 electrodes")
+    t.sleep(2)
     node_amount = input("How many nodes should be generated in the network?:")
     population_size = input("How many individuals should comprise the population?:")
     CA = input("Should the network be connected as CA?:")
     
     if CA == "yes":
+        edge_list = init_connection(population_size)
+    '''if CA == "yes":
         edge_list = [(0,1,0.1),(0,7,0.1),(1,2,0.1),(1,8,0.1),(2,3,0.1),(2,9,0.1),(3,4,0.1),(3,10,0.1),(4,5,0.1),(4,11,0.1),(5,12,0.1),
             (6,7,0.1),(6,14,0.1),(7,8,0.1),(7,15,0.1),(8,9,0.1),(8,16,0.1),(9,10,0.1),(9,17,0.1),(10,11,0.1),(10,18,0.1),(11,12,0.1),(11,19,0.1),(12,13,0.1),(12,20,0.1),(13,21,0.1),
             (14,15,0.1),(14,22,0.1),(15,16,0.1),(15,23,0.1),(16,17,0.1),(16,24,0.1),(17,18,0.1),(17,25,0.1),(18,19,0.1),(18,26,0.1),(19,20,0.1),(19,27,0.1),(20,21,0.1),(20,28,0.1),(21,29,0.1),
@@ -203,9 +250,9 @@ def network_initialise():
             (30,31,0.1),(30,38,0.1),(31,32,0.1),(31,39,0.1),(32,33,0.1),(32,40,0.1),(33,34,0.1),(33,41,0.1),(34,35,0.1),(34,42,0.1),(35,36,0.1),(35,43,0.1),(36,37,0.1),(36,44,0.1),(37,45,0.1),
             (38,39,0.1),(38,46,0.1),(39,40,0.1),(39,47,0.1),(40,41,0.1),(40,48,0.1),(41,42,0.1),(41,49,0.1),(42,43,0.1),(42,50,0.1),(43,44,0.1),(43,51,0.1),(44,45,0.1),(44,52,0.1),(45,53,0.1),
             (46,47,0.1),(47,48,0.1),(47,54,0.1),(48,49,0.1),(48,55,0.1),(49,50,0.1),(49,56,0.1),(50,51,0.1),(50,57,0.1),(51,52,0.1),(51,58,0.1),(52,53,0.1),(52,59,0.1),
-            (54,55,0.1),(55,56,0.1),(56,57,0.1),(57,58,0.1),(58,59,0.1)]
+            (54,55,0.1),(55,56,0.1),(56,57,0.1),(57,58,0.1),(58,59,0.1)]'''
     G_ = nx.Graph()
-    G_.add_weighted_edges_from(edge_list)
+    #G_.add_weighted_edges_from(edge_list)
     return int(node_amount), int(population_size), G_, edge_list
 
 """
@@ -215,55 +262,123 @@ P R O G R A M
 if __name__ == '__main__':
     # Initialise
     t0 = t.perf_counter()
-
-    ###
-    decay_min = 0.001
-    decay_max = 0.1
-    threshold_min = 0.5
-    threshold_max = 1
-    prob_selffire_min = 0.0001
-    prob_selffire_max = 0.001
-    obstruction_period_min = 0.00004 # increment 0.00002
-    obstruction_period_max = 0.0004
-    # could be declared in initialise() and returned
-    ###
     
+    
+    ###
+    decay_min = 0.0001
+    decay_max = 5
+    decay_percent_of_max = 0.1
+    decay_range = (decay_max)*decay_percent_of_max
+    threshold_min = 0.5
+    threshold_max = 5
+    threshold_percent_of_max = 0.1
+    threshold_range = (threshold_max)*threshold_percent_of_max
+    prob_selffire_min = 0.000001
+    prob_selffire_max = 0.01
+    prob_selffire_percent_of_max = 0.1
+    prob_selffire_range = (prob_selffire_max)*prob_selffire_percent_of_max
+    obstruction_period_min = 0.003 
+    obstruction_period_max = 5
+    obstruction_period_percent_of_max = 0.1
+    obstruction_period_range = (obstruction_period_max)*obstruction_period_percent_of_max
+    # could be declared in initialise() and returned
+    
+    
+
     nodeamount, populationsize, G, edgelist = network_initialise()
     generation = init_generation(nodeamount,populationsize)
     
-    # Update
+    
 
+    # Update
+    nr_of_generations = 25
     generation_nr = 0
     fitnesscore = 900000
+    fitnesscore_list = []
+    generation_nr_list = []
+    '''animate = FuncAnimation(plt.gcf(),fit.animate(generation_nr,fitnesscore_list),interval=5000)
+    plt.tight_layout()
+    plt.show()'''
 
-    while fitnesscore > 10000:
+    for nr_generations in range(nr_of_generations):
         t1 = t.perf_counter()
     
-    
-        #phenotype = phenotype_generator(G,generation,populationsize)
-        args = multiprocessor.multi_variables(G,generation,populationsize)
+
+        if generation_nr == 0:
+            print("Initial generation")
+            '''parameter_progress_file = open("data\parameter_progress.txt","w")
+            parameter_progress_file.write("Initial generation:\n")
+            parameter_progress_file.close()'''
+        else:
+            print("Generation: ",generation_nr)
+            '''parameter_progress_file = open("data\parameter_progress.txt","a")
+            parameter_progress_file.write("\n --------------------\n Generation number: "+str(generation_nr)+"\n ---------------------\n")
+            parameter_progress_file.close()'''
+
+
+        '''parameter_progress_file = open("data\parameter_progress.txt","a")
+        for i in range(len(generation)):
+            parameter_progress_file.write("\n Individual "+str(i)+" parameters: \n")
+            for j in range(len(generation[i])):
+                parameter_progress_file.write("Node"+str(j)+": "+str(generation[i][j])+"\n")
+        for _ in range(len(edgelist)):
+            parameter_progress_file.write("\n Weights: "+str(edgelist))
+        parameter_progress_file.close()'''
+
+        #phenotype = phenotype_generator(G,generation,edgelist,populationsize)
+        args = multiprocessor.multi_variables(G,generation,populationsize,edgelist)
         phenotype = multiprocessor.multiprocessor(args)
         #print("generation_nr: ",generation_nr,"name: ",__name__)
         
+        
+
         t2 = t.perf_counter()
         bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
-    
-        if generation_nr == 0:
-            print("Initial generation")
-        else:
-            print("Generation: ",generation_nr)
-        print("Population size: ",populationsize)
+        
+        fitnesscore_list.append(fitnesscore)
+        generation_nr_list.append(generation_nr)
+        
+
+        '''phenotype_file = open("data\phenotype.txt","w")
+        for i in range(len(phenotype)):
+            phenotype_file.write("GeneratioN: "+str(generation_nr)+", Individual: "+str(i)+"Output: \n"+str(phenotype[i])+"\n\n")
+        phenotype_file.close()'''
+        
+        #print("Population size: ",populationsize)
         print("Phenotype generation finished in "+str(round(t2-t1,2))+" seconds")
         print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
-    
+
+        '''parameter_progress_file = open("data\parameter_progress.txt","a")
+        parameter_progress_file.write("\n\n Best individual: "+str(bestmatch)+". Fitnesscore: "+str(fitnesscore)+"\n")
+        for i in range(len(generation)):
+            parameter_progress_file.write("\n Updated individual "+str(i)+" parameters: \n")
+            for j in range(len(generation[i])):
+                parameter_progress_file.write("Updated Node"+str(j)+": "+str(generation[i][j])+"\n")
+        for _ in range(len(edgelist)):
+            parameter_progress_file.write("\n Updated Weights: "+str(edgelist))
+        parameter_progress_file.close()'''
+
+
+
         generation = mutation(generation,bestmatch,nodeamount,populationsize)
+        
+        parameter_progress_file = open("data\parameter_progress.txt","a")
+        for i in range(len(generation)):
+            parameter_progress_file.write("\n Mutated individual "+str(i)+" parameters: \n")
+            for j in range(len(generation[i])):
+                parameter_progress_file.write("Mutated Node"+str(j)+": "+str(generation[i][j])+"\n")
+        for _ in range(len(edgelist)):
+            parameter_progress_file.write("\n Mutated Weights: "+str(edgelist))
+        parameter_progress_file.close()
+
+
         #generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
 
         generation_nr += 1
         #time.sleep(1)
 
     t3 = t.perf_counter()
-    print("total elapsed time: ",round(t3-t2,2))
+    print("total elapsed time: ",round(t3-t0,2))
     f = open("Data\Best_spikes.txt", "w")
     for element in phenotype[bestmatch]:
         f.write(str(element[0]) + " " + str(element[1]) + '\n')

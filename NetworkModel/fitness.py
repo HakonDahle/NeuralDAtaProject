@@ -1,4 +1,6 @@
 import load_data as load
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 
 # Calculates fire rate for the whole electrode array (spikes/t) 
@@ -14,9 +16,9 @@ def best_fit(sim_output):
 def best_fit_test(sim_output):
     # 0-59 seconds = 7408
     #0 - 2 seconds = 198
-    diff = abs(len(spike_list_fasit[:198]) - len(sim_output))
-    print("len data[0-198]: ",len(spike_list_fasit),)
-    print("len phenotype: ",len(sim_output))
+    #0 - 10 seconds 1187
+    diff = abs(len(spike_list_fasit) - len(sim_output))
+    #print("len data[0-198]: ",len(spike_list_fasit),"len phenotype: ",len(sim_output))
     return diff
 
 def pick_best_rule_set(set_of_rules):
@@ -35,4 +37,11 @@ def pick_best_rule_set(set_of_rules):
             #print(f"score er foreløbig {score}")
     return beste_regel, score
 
+def animate(generation_nr,fitness_score):
+    data = fitness_score
+    x_value = generation_nr
 
+    plt.cla()
+    
+    plt.plot(x_value,data, label='fitnesscore')
+    plt.tight_layout
