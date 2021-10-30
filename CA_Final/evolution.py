@@ -12,7 +12,7 @@ Set wished fitness score.
 '''
 
 
-number_of_rules = 4
+number_of_rules = 7
 preferred_fitness_score = 15000
 
 '''       
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         now = datetime.now()
         dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
 
-        full_path = 'C:/NeuralDataProject/NeuralDAtaProject/CA_Final/Test_Results'
+        full_path = 'C:/Users/elias/OneDrive/OsloMet/Master/ACIT4610 AI/Prosjekt/NeuralDAtaProject-main/CA_Final/Test_Results'
         path = ("\CA_Final\Test_Results")
 
         print(f"{path}\\{dt_string}")

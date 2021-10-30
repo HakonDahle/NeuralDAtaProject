@@ -17,7 +17,7 @@ width = 8
 height = 8
 initProb = 0.2 #probability for electrode in grid to start active
 sec_to_run = 1800
-update_freq = 0.001
+update_freq = 0.01
 t = 0
 
 
@@ -62,7 +62,7 @@ def simulate_MP(list_of_rule_sets):
 
     part_sim_MP = partial(sim_MP,config=config,nextConfig=nextConfig)
 
-    with Pool(4) as p: #os.cpu_count()-1
+    with Pool(os.cpu_count()-1) as p: #os.cpu_count()-1
         results = p.map(part_sim_MP,list_of_rule_sets)
         p.close()
     return results
