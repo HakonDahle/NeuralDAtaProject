@@ -30,7 +30,7 @@ t, data = datamanagement(best_spikes)
 def electrode_list(activeElectrodes,time):    # Returns a list of timestamps organized for each electrode
     temp_array = []
     temp_electrode = []
-    for electrodenr in range(0,64):
+    for electrodenr in range(0,60):
         for element in range(len(activeElectrodes)):
             spike = activeElectrodes[element]  # The spiked electrode
             
@@ -45,6 +45,6 @@ colors1 = ['C{}'.format(i) for i in range(60)]  # Creates 64 different colors, o
 
 electrodes = electrode_list(data,t) # Creates the list of electrodes
 
-#plt.eventplot(electrodes, colors=colors1,linestyles='dotted')   # Creates the raster plot
-plt.scatter(t,data,s=0.5,marker=",",cmap=colors1)
+plt.eventplot(electrodes, colors=colors1)   # Creates the raster plot
+#plt.scatter(t,data,s=0.6,marker=",",cmap=colors1)
 plt.show()  # displays the rasterplot
