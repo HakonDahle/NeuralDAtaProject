@@ -1,9 +1,12 @@
 import networkx as nx
 import copy
+import file_write
 import random as r
 from multiprocessing import Pool
+import multiprocessing as multi
 import time as t
 import os
+import Networkmodel as nm
 
 def multiprocessor(args):
     population_size = args[0][2]
@@ -38,7 +41,13 @@ def multi_variables(G_,gen,population_size,edge_list):
 
 def multi_phenotype_generator(params):
     if __name__ == 'multiprocessor':
-        print("Process initialising")
+        
+        current_process = multi.current_process()
+        
+        print("Process initialising: ",current_process.name)
+        print("currentprocess: ",multi.current_process())
+        phenofilepath = file_write.generate_pheno_file(nm.trial_nr,nm.generation_nr,nm.trialname,current_process)
+
         population_size = params[2] # this can be removed
         G_ = params[1]
         gen = params[0]
@@ -48,13 +57,13 @@ def multi_phenotype_generator(params):
         print("edges: ",edges,"\n")
         print("edges[0]: ",edges[0])'''
         phenotype_ = []
-        fs = 1000
+        fs = 114
         time = 0
         G_.add_nodes_from(gen[0])
         G_.add_weighted_edges_from(edges[0])
         selffire_count = 0
         potential_count = 0 
-        time_limit = 1800
+        time_limit = 60
         sec = 0
         time_control = 0
         
@@ -97,7 +106,7 @@ def multi_phenotype_generator(params):
                                         for nbr, eattr in nbrs.items():
                                             if (G_.nodes[nbr]["prev spike"] == 1) and (G_.nodes[nodenr]["spike"] == 1) and (G_.edges[nodenr,nbr]["weight"] < 1):
                                                 #print("nodenr: ",nodenr,"nbr: ",nbr,"G_.edges[nodenr,nbr][ weight]: ",G_.edges[nodenr,nbr]["weight"])
-                                                G_.edges[nodenr,nbr]["weight"] += 0.05
+                                                G_.edges[nodenr,nbr]["weight"] += 0.05 #G_.edges[nodenr,nbr]["weight"]  SETS EQUAL TO ITSELF TO HAVE STATIC WEIGHTS!!!!
                                                 #print("G_.edges[nodenr,nbr][ weight]: ",G_.edges[nodenr,nbr]["weight"])
                                     #print("SINGLE: i: ",i,"node: ",nodenr,"nbrs: ",nbrs,"nbr: ",nbr,"fire_wire: ", fire_wire)             
                                 #print("nodenr: ",nodenr,"potential: ",G_.nodes[nodenr]["potential"],"nbr: ",nbr,"nbr_prev_spike: ", G_.nodes[nbr]["prev spike"])
@@ -125,7 +134,11 @@ def multi_phenotype_generator(params):
             if (time - time_control) > 120.01:
                 sec += 120
                 time_control = time
+
                 print(sec," seconds has passed.")
+                
+                file_write.write_pheno_file(phenofilepath,phenotype_)
+                phenotype_.clear()
             '''
             """
             Drawing

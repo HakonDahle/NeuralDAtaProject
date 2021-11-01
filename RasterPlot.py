@@ -20,7 +20,7 @@ def datamanagement(datalist):
 
 dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
 sparse7231 = readFile('data\Dense 2-3-10.spk.txt')
-best_spikes = readFile('data\Best_spikes.txt')
+best_spikes = readFile('data\Generation_8_fitnesscore_6.txt')
 
 width = 8   # Number of electrodes in x direction
 height = 8  # Number of electrodes in y

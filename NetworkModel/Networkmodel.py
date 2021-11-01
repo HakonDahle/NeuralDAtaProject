@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from networkx.classes.function import freeze
 from numpy import errstate
-import load_data
+import file_write
+import load_data as load
 import multiprocessor
 import time as t
 import fitness as fit
@@ -240,6 +241,8 @@ def network_initialise():
     population_size = input("How many individuals should comprise the population?:")
     CA = input("Should the network be connected as CA?:")
     
+    trial_name = input("Please enter the name of the file: ")
+
     if CA == "yes":
         edge_list = init_connection(population_size)
     '''if CA == "yes":
@@ -253,140 +256,112 @@ def network_initialise():
             (54,55,0.1),(55,56,0.1),(56,57,0.1),(57,58,0.1),(58,59,0.1)]'''
     G_ = nx.Graph()
     #G_.add_weighted_edges_from(edge_list)
-    return int(node_amount), int(population_size), G_, edge_list
+    return int(node_amount), int(population_size), G_, edge_list, trial_name
 
 """
 P R O G R A M
 """
 
 if __name__ == '__main__':
-    # Initialise
-    t0 = t.perf_counter()
-    
-    
-    ###
-    decay_min = 0.0001
-    decay_max = 5
-    decay_percent_of_max = 0.1
-    decay_range = (decay_max)*decay_percent_of_max
-    threshold_min = 0.5
-    threshold_max = 5
-    threshold_percent_of_max = 0.1
-    threshold_range = (threshold_max)*threshold_percent_of_max
-    prob_selffire_min = 0.000001
-    prob_selffire_max = 0.01
-    prob_selffire_percent_of_max = 0.1
-    prob_selffire_range = (prob_selffire_max)*prob_selffire_percent_of_max
-    obstruction_period_min = 0.003 
-    obstruction_period_max = 5
-    obstruction_period_percent_of_max = 0.1
-    obstruction_period_range = (obstruction_period_max)*obstruction_period_percent_of_max
-    # could be declared in initialise() and returned
-    
-    
-
-    nodeamount, populationsize, G, edgelist = network_initialise()
-    generation = init_generation(nodeamount,populationsize)
-    
-    
-
-    # Update
-    nr_of_generations = 25
-    generation_nr = 0
-    fitnesscore = 900000
-    fitnesscore_list = []
-    generation_nr_list = []
-    '''animate = FuncAnimation(plt.gcf(),fit.animate(generation_nr,fitnesscore_list),interval=5000)
-    plt.tight_layout()
-    plt.show()'''
-
-    for nr_generations in range(nr_of_generations):
-        t1 = t.perf_counter()
-    
-
-        if generation_nr == 0:
-            print("Initial generation")
-            '''parameter_progress_file = open("data\parameter_progress.txt","w")
-            parameter_progress_file.write("Initial generation:\n")
-            parameter_progress_file.close()'''
-        else:
-            print("Generation: ",generation_nr)
-            '''parameter_progress_file = open("data\parameter_progress.txt","a")
-            parameter_progress_file.write("\n --------------------\n Generation number: "+str(generation_nr)+"\n ---------------------\n")
-            parameter_progress_file.close()'''
-
-
-        '''parameter_progress_file = open("data\parameter_progress.txt","a")
-        for i in range(len(generation)):
-            parameter_progress_file.write("\n Individual "+str(i)+" parameters: \n")
-            for j in range(len(generation[i])):
-                parameter_progress_file.write("Node"+str(j)+": "+str(generation[i][j])+"\n")
-        for _ in range(len(edgelist)):
-            parameter_progress_file.write("\n Weights: "+str(edgelist))
-        parameter_progress_file.close()'''
-
-        #phenotype = phenotype_generator(G,generation,edgelist,populationsize)
-        args = multiprocessor.multi_variables(G,generation,populationsize,edgelist)
-        phenotype = multiprocessor.multiprocessor(args)
-        #print("generation_nr: ",generation_nr,"name: ",__name__)
+    for _ in range(100):
+        # Initialise
+        t0 = t.perf_counter()
         
         
+        ###
+        decay_min = 0.0001
+        decay_max = 5
+        decay_percent_of_max = 0.1
+        decay_range = (decay_max)*decay_percent_of_max
+        threshold_min = 0.5
+        threshold_max = 5
+        threshold_percent_of_max = 0.1
+        threshold_range = (threshold_max)*threshold_percent_of_max
+        prob_selffire_min = 0.000001
+        prob_selffire_max = 0.01
+        prob_selffire_percent_of_max = 0.1
+        prob_selffire_range = (prob_selffire_max)*prob_selffire_percent_of_max
+        obstruction_period_min = 0.003 
+        obstruction_period_max = 5
+        obstruction_period_percent_of_max = 0.1
+        obstruction_period_range = (obstruction_period_max)*obstruction_period_percent_of_max
+        # could be declared in initialise() and returned
+    
+    
 
-        t2 = t.perf_counter()
-        bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
+        nodeamount, populationsize, G, edgelist, trialname = network_initialise()
+        generation = init_generation(nodeamount,populationsize)
+    
+
         
-        fitnesscore_list.append(fitnesscore)
-        generation_nr_list.append(generation_nr)
+
+        # Update
+        nr_of_generations = 25
+        generation_nr = 0
+        trial_nr = 0
+        fitnesscore = 900000
+        fitnesscore_list = []
+        generation_nr_list = []
+        phenofile_list = []
+        '''animate = FuncAnimation(plt.gcf(),fit.animate(generation_nr,fitnesscore_list),interval=5000)
+        plt.tight_layout()
+        plt.show()'''
         
 
-        '''phenotype_file = open("data\phenotype.txt","w")
-        for i in range(len(phenotype)):
-            phenotype_file.write("GeneratioN: "+str(generation_nr)+", Individual: "+str(i)+"Output: \n"+str(phenotype[i])+"\n\n")
-        phenotype_file.close()'''
-        
-        #print("Population size: ",populationsize)
-        print("Phenotype generation finished in "+str(round(t2-t1,2))+" seconds")
-        print("best individual: ",bestmatch, "Fitnesscore: ",fitnesscore)
+        print("Trial version: ",trial_nr)
+        for nr_generations in range(nr_of_generations):
+            t1 = t.perf_counter()
+    
 
-        '''parameter_progress_file = open("data\parameter_progress.txt","a")
-        parameter_progress_file.write("\n\n Best individual: "+str(bestmatch)+". Fitnesscore: "+str(fitnesscore)+"\n")
-        for i in range(len(generation)):
-            parameter_progress_file.write("\n Updated individual "+str(i)+" parameters: \n")
-            for j in range(len(generation[i])):
-                parameter_progress_file.write("Updated Node"+str(j)+": "+str(generation[i][j])+"\n")
-        for _ in range(len(edgelist)):
-            parameter_progress_file.write("\n Updated Weights: "+str(edgelist))
-        parameter_progress_file.close()'''
+            if generation_nr == 0:
+                print("Initial generation")
+                '''parameter_progress_file = open("data\parameter_progress.txt","w")
+                parameter_progress_file.write("Initial generation:\n")
+                parameter_progress_file.close()'''
+            else:
+                print("Generation: ",generation_nr)
+                '''parameter_progress_file = open("data\parameter_progress.txt","a")
+                parameter_progress_file.write("\n --------------------\n Generation number: "+str(generation_nr)+"\n ---------------------\n")
+                parameter_progress_file.close()'''
 
 
+            #phenotype = phenotype_generator(G,generation,edgelist,populationsize)
+            args = multiprocessor.multi_variables(G,generation,populationsize,edgelist)
+            phenotype = multiprocessor.multiprocessor(args)
+            #print("generation_nr: ",generation_nr,"name: ",__name__)
+            
+            '''for i in range(1,populationsize):
+                spawnworker = "SpawnPoolWorker-"+str(i)
+                phenofile_list.append(file_write.generate_pheno_file(trial_nr,generation_nr, trialname,"SpawnpoolWorker"))
+                print("filename_list: ",phenofile_list)'''
 
-        generation = mutation(generation,bestmatch,nodeamount,populationsize)
-        
-        parameter_progress_file = open("data\parameter_progress.txt","a")
-        for i in range(len(generation)):
-            parameter_progress_file.write("\n Mutated individual "+str(i)+" parameters: \n")
-            for j in range(len(generation[i])):
-                parameter_progress_file.write("Mutated Node"+str(j)+": "+str(generation[i][j])+"\n")
-        for _ in range(len(edgelist)):
-            parameter_progress_file.write("\n Mutated Weights: "+str(edgelist))
-        parameter_progress_file.close()
+            t2 = t.perf_counter()
+            bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
+            #bestmatch, fitnesscore = fit.pick_best_rule_set(phenofile_list)
+            print("Best match: ",bestmatch, "fitnesscore: ",fitnesscore)
+    
+            file_write.fitness_file(fitnesscore,generation_nr,trialname,trial_nr)
 
+            if fitnesscore < 10:
+                print("Fitnesscore is below 10. Starting new trial.")
+                break
 
-        #generation = multiprocessor.multi_mutation(generation,bestmatch,nodeamount,populationsize)
+            generation = mutation(generation,bestmatch,nodeamount,populationsize)
+            generation_nr += 1
+            if generation_nr > 25:
+                generation_nr = 0
 
-        generation_nr += 1
-        #time.sleep(1)
-
-    t3 = t.perf_counter()
-    print("total elapsed time: ",round(t3-t0,2))
-    f = open("Data\Best_spikes.txt", "w")
-    for element in phenotype[bestmatch]:
-        f.write(str(element[0]) + " " + str(element[1]) + '\n')
-    f.close()
+        t3 = t.perf_counter()
+        trial_nr +=1
+        print("total elapsed time: ",round(t3-t0,2))
+        '''f = open("Data\Best_spikes.txt", "w")
+        for element in phenotype[bestmatch]:
+            f.write(str(element[0]) + " " + str(element[1]) + '\n')
+        f.close()'''
  
-    """
+        """
 
-    - Apply number of active electrodes in fitness function?
-    - Fix weights
+        - Apply number of active electrodes in fitness function?
+        - Fix weights
 
-    """
+        """
