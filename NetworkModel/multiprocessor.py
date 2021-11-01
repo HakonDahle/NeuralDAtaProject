@@ -137,8 +137,11 @@ def multi_phenotype_generator(params):
 
                 print(sec," seconds has passed.")
                 
-                file_write.write_pheno_file(phenofilepath,phenotype_)
-                phenotype_.clear()
+                '''file_write.write_pheno_file(phenofilepath,phenotype_)
+                phenotype_.clear()'''
+            
+            
+            
             '''
             """
             Drawing

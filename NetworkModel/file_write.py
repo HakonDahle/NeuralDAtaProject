@@ -30,7 +30,7 @@ def write_pheno_file(full_path,pheno_type):
         #f.write(str(element[0]) + " " + str(element[1]) + '\n')
     file.close()
 
-    return full_path
+    
     
 
 def fitness_file(fitness_score,generation_nr,trial_name,trial_nr):
