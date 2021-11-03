@@ -4,6 +4,7 @@ from pylab import *
 import copy
 from functools import partial
 import numpy as np
+import multiprocessing
 
 '''
 This is the program containing the simulation of spikes
@@ -17,7 +18,7 @@ width = 8
 height = 8
 initProb = 0.2 #probability for electrode in grid to start active
 sec_to_run = 1800
-update_freq = 0.001
+update_freq = 0.1
 t = 0
 
 
@@ -72,13 +73,14 @@ Running the update function for the given preferred time period
 Returning a list with time and electrode number for each spike on the given rule set'''
 def sim_MP(rule_set,config,nextConfig): 
     time = 0
-    process = os.getpid()
-    filename = f'C:/Users/elias/OneDrive/OsloMet/Master/ACIT4610 AI/Prosjekt/NeuralDAtaProject-main/CA_Write_to_file/Spike_Lists/process_{process}.txt'
+    #current_process = multiprocessing.current_process() 
+    process = os.getpid() #current_process.name #os.getpid()
+    #filename = f'C:/Users/Public/Documents/CA_Write_to_file/Spike_Lists/process_{process}.txt'
+    filename = f'CA_Write_to_file/Spike_Lists/process_{process}.txt'
     while time < sec_to_run:
         spikes_info, time, config, nextConfig = update_MP(rule_set, time,config,nextConfig)
         copy_spikes = copy.deepcopy(spikes_info)
        
-
         f = open(filename, "a")
         for j in range(len(copy_spikes)):
             f.write(f"{time} {copy_spikes[j]}" + '\n')

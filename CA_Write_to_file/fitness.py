@@ -11,7 +11,7 @@ This is the fitness-function methods that are used to evaluate the spikes create
 list_of_imported_spikes = load.get_data()  #imports spikes and times from Dense2-3-10 in two separate lists
 imported_list_spike_time = load.get_time()
 
-unused_electrodes_penalty = 5000           #Sets the value for the penalty given for each unused electrode
+unused_electrodes_penalty = 100           #Sets the value for the penalty given for each unused electrode
 
 '''
 Method that gets the simulated input and returns the
@@ -41,8 +41,12 @@ def best_fit(sim_output):
     f = open(sim_output, "r")
     generated_spikes = len(f.readlines())
     f.close()
+    print(f"generated spikes: {generated_spikes}, imported spikes: {len(list_of_imported_spikes)}, diff: {len(list_of_imported_spikes)-generated_spikes}")
+    #print(f"generated spikes:{type(generated_spikes)}, listofimportant: {type(len(list_of_imported_spikes))}")
     diff = abs(len(list_of_imported_spikes) - generated_spikes)
     diff += use_electrodes(sim_output)           #penalizes unused electrodes
+    if generated_spikes < 30000:
+        diff +=500000
 
     return diff
 
@@ -60,6 +64,7 @@ def use_electrodes(filename):
             del temp_list[:index]
         except ValueError:
             score += unused_electrodes_penalty
+    print(f"penalty for unused electrodes is {score}")
     return score
 
 
