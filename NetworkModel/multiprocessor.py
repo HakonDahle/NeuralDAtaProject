@@ -56,13 +56,13 @@ def multi_phenotype_generator(params):
         print("edges: ",edges,"\n")
         print("edges[0]: ",edges[0])'''
         phenotype_ = []
-        fs = 1000
+        fs = 57
         time = 0
         G_.add_nodes_from(gen[0])
         G_.add_weighted_edges_from(edges[0])
         selffire_count = 0
         potential_count = 0 
-        time_limit = 1800
+        time_limit = 2
         sec = 0
         time_control = 0
         
@@ -167,6 +167,7 @@ def multi_phenotype_generator(params):
     #print("selffire_count: ",selffire_count, "potential_count: ",potential_count)
     #print("G_.edges.data()",G_.edges.data('weight'))
     #print("Process terminating")
+    
     print("Amount of selfspikes: ",selffire_count, "Amount of potential spikes: ", potential_count)
     return phenotype_
 

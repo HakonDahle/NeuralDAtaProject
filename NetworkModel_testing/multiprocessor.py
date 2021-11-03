@@ -167,6 +167,7 @@ def multi_phenotype_generator(params):
     #print("selffire_count: ",selffire_count, "potential_count: ",potential_count)
     #print("G_.edges.data()",G_.edges.data('weight'))
     #print("Process terminating")
+    
     print("Amount of selfspikes: ",selffire_count, "Amount of potential spikes: ", potential_count)
     return phenotype_
 

@@ -20,12 +20,17 @@ def datamanagement(datalist):
 
 dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
 sparse7231 = readFile('data\Dense 2-3-10.spk.txt')
-best_spikes = readFile('data\Generation_8_fitnesscore_6.txt')
+Gen13_fit9 = readFile('data\Generation_13_Fitnesscore_9.txt')
+Gen8_fit6 = readFile('data\Generation_8_Fitnesscore_6.txt')
+fitnesscore_Gen8_fit6 = readFile('data\FitnesscoresCA_11ind_Len_011121_2012.txt')
 
 width = 8   # Number of electrodes in x direction
 height = 8  # Number of electrodes in y
 
-t, data = datamanagement(best_spikes)
+t_fasit, data_fasit = datamanagement(dense2310)
+t_Gen13_fit9, data_Gen13_fit9 = datamanagement(Gen13_fit9)
+t_Gen8_fit6, data_Gen8_fit6 = datamanagement(Gen8_fit6)
+ 
 
 def electrode_list(activeElectrodes,time):    # Returns a list of timestamps organized for each electrode
     temp_array = []
@@ -43,8 +48,36 @@ def electrode_list(activeElectrodes,time):    # Returns a list of timestamps org
 
 colors1 = ['C{}'.format(i) for i in range(60)]  # Creates 64 different colors, one for each electrode
 
-electrodes = electrode_list(data,t) # Creates the list of electrodes
+electrodes = electrode_list(data_fasit,t_fasit) # Creates the list of electrodes
 
-plt.eventplot(electrodes, colors=colors1)   # Creates the raster plot
-#plt.scatter(t,data,s=0.6,marker=",",cmap=colors1)
-plt.show()  # displays the rasterplot
+#plt.eventplot(electrodes, colors=colors1)   # Creates the raster plot
+
+
+
+def show_rasterplot(time_from_fasit,data_from_fasit,t1,data1,t2,data2):
+    fig = plt.figure(1)
+    plt.subplot(311)#(nrows = 2, ncols = 1, sharex=True, sharey = True)
+    plt.scatter(time_from_fasit,data_from_fasit,s=0.8,alpha=0.5,c='green')
+    plt.title('Dense 2-3-31')
+    plt.ylabel('Electrode')
+    plt.subplot(312)
+    plt.scatter(t1,data1,s=0.8,alpha=0.5,c='red')
+    plt.title('Network model, Fitnesscore 9, Weight+=0.05')
+    plt.ylabel('Node')
+    plt.subplot(313)
+    plt.scatter(t2,data2,s=0.8,alpha=0.5,c='red')
+    plt.title('Network model, Fitnesscore 6, Weight+=0.05')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Node')
+    plt.show()  # displays the rasterplot
+
+#show_rasterplot(t_fasit,data_fasit,t_Gen13_fit9,data_Gen13_fit9,t_Gen8_fit6,data_Gen8_fit6)
+
+def show_fitnesscores(fitnesscore):
+    fig = plt.figure(2)
+    plt.plot()
+    plt.ylabel('Fitnesscore')
+    plt.xlabel('Generation')
+    plt.show()
+
+show_fitnesscores(fitnesscore_Gen8_fit6)
