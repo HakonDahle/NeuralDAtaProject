@@ -2,6 +2,7 @@ import load_data as load
 import copy
 from multiprocessing import Pool
 import os
+import time as t
 
 
 '''
@@ -21,7 +22,7 @@ index of the best rule, and the fitness score of this rule
 def pick_best_rule_set(list_of_spikes):
     score = 10000000000
     best_rule = 0
-    
+
     with Pool(os.cpu_count()-1 ) as p: #os.cpu_count()-1       #Making the best_fit method run at the same time, on different cpu's
         results = p.map(best_fit,list_of_spikes)
         p.close()
@@ -38,28 +39,39 @@ def pick_best_rule_set(list_of_spikes):
 
 
 def best_fit(sim_output):
-    f = open(sim_output, "r")
-    generated_spikes = len(f.readlines())
-    f.close()
-    diff = abs(len(list_of_imported_spikes) - generated_spikes)
+    diff = abs(len(list_of_imported_spikes) - len(sim_output))
     diff += use_electrodes(sim_output)           #penalizes unused electrodes
 
+    return diff
+
+def best_fit_test(sim_output):
+    # 0-59 seconds = 7408
+    #0 - 2 seconds = 198
+    #0 - 10 seconds 1187
+    diff = abs(len(list_of_imported_spikes[:7408]) - len(sim_output))
+    print("Length data: ",len(list_of_imported_spikes), "Length spikes: ",len(sim_output))
+    diff += use_electrodes(sim_output)           #penalizes unused electrodes
+    #print("len data[0-198]: ",len(spike_list_fasit),"len phenotype: ",len(sim_output))
     return diff
 
 '''
 Method that worsen the fitness score if many electrodes are unused
 '''
 
-def use_electrodes(filename):
+def use_electrodes(list_of_electrodes):
     score = 0
-    list_of_electrodes = load.get_data_from_file(filename)
     temp_list = copy.deepcopy(list_of_electrodes)
+
     for i in range(60):
         try:
             index = temp_list.index(i)
+            print("Active: ",i)
             del temp_list[:index]
         except ValueError:
+            print("Inactive: ",i)
             score += unused_electrodes_penalty
+
+    print("Electrode score: ",score)
     return score
 
 
