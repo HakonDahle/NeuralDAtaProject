@@ -20,7 +20,8 @@ def datamanagement(datalist):
 
 dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
 sparse7231 = readFile('data\Dense 2-3-10.spk.txt')
-best_spikes = readFile('Generation_16_FitScore_602.txt')
+best_spikes = readFile('CA_Write_to_file/Test_Results/03_11_2021__12_46_18/Generation_11_FitScore_2501.txt')
+fitness_score = readFile('CA_Write_to_file/Test_Results/03_11_2021__14_02_05/Fitness_score.txt')
 
 width = 8   # Number of electrodes in x direction
 height = 8  # Number of electrodes in y
@@ -39,7 +40,12 @@ def electrode_list(activeElectrodes,time):    # Returns a list of timestamps org
         temp_array.append(temp_electrode[:])    # Adds the electrode column at the end of the list
         temp_electrode.clear()  # Clears the temporary electrode to make it ready for the next
     
-    return temp_array   
+    return temp_array  
+
+fitness_list = []
+for i in range(len(fitness_score)):
+    fitness_list.append([i,int(fitness_score[i])])
+print(fitness_list)
 
 colors1 = ['C{}'.format(i) for i in range(64)]  # Creates 64 different colors, one for each electrode
 
@@ -47,3 +53,5 @@ electrodes = electrode_list(data,t) # Creates the list of electrodes
 
 plt.eventplot(electrodes, colors=colors1)   # Creates the raster plot
 plt.show()  # displays the rasterplot
+plt.plot(fitness_list)
+plt.show()

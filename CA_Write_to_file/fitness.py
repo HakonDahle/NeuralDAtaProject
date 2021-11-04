@@ -42,7 +42,6 @@ def best_fit(sim_output):
     generated_spikes = len(f.readlines())
     f.close()
     print(f"generated spikes: {generated_spikes}, imported spikes: {len(list_of_imported_spikes)}, diff: {len(list_of_imported_spikes)-generated_spikes}")
-    #print(f"generated spikes:{type(generated_spikes)}, listofimportant: {type(len(list_of_imported_spikes))}")
     diff = abs(len(list_of_imported_spikes) - generated_spikes)
     diff += use_electrodes(sim_output)           #penalizes unused electrodes
     if generated_spikes < 30000:

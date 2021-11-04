@@ -4,7 +4,6 @@ from pylab import *
 import copy
 from functools import partial
 import numpy as np
-import multiprocessing
 
 '''
 This is the program containing the simulation of spikes
@@ -57,25 +56,24 @@ Multiprocessing verson of simulate() and update()
 '''
 Running the method sim_MP on several cpu's 
 The method encapsulates the global variables config and nextConfig so that the different processes won't interfere with each other
-Returning a list containing the spikes for each rule set'''
+Returning a list containing the filenames of the files containing spikes for each rule set'''
 def simulate_MP(list_of_rule_sets):
     global time, config, nextConfig
 
     part_sim_MP = partial(sim_MP,config=config,nextConfig=nextConfig)
 
-    with Pool(os.cpu_count()-1) as p: #os.cpu_count()-1
+    with Pool(os.cpu_count()-1) as p: 
         results = p.map(part_sim_MP,list_of_rule_sets)
         p.close()
     return results
 
 '''
 Running the update function for the given preferred time period
-Returning a list with time and electrode number for each spike on the given rule set'''
+Returning the name of the file containing time and electrode number for each spike on the given rule set'''
 def sim_MP(rule_set,config,nextConfig): 
     time = 0
-    #current_process = multiprocessing.current_process() 
-    process = os.getpid() #current_process.name #os.getpid()
-    #filename = f'C:/Users/Public/Documents/CA_Write_to_file/Spike_Lists/process_{process}.txt'
+     
+    process = os.getpid() #name of process
     filename = f'CA_Write_to_file/Spike_Lists/process_{process}.txt'
     while time < sec_to_run:
         spikes_info, time, config, nextConfig = update_MP(rule_set, time,config,nextConfig)
@@ -84,7 +82,6 @@ def sim_MP(rule_set,config,nextConfig):
         f = open(filename, "a")
         for j in range(len(copy_spikes)):
             f.write(f"{time} {copy_spikes[j]}" + '\n')
-            #spikes_list.append([time,copy_spikes[j]])
         f.close()
         spikes_info.clear()
 
