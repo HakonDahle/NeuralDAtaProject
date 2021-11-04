@@ -111,7 +111,7 @@ if __name__ == '__main__':
         Method that runs for given amount of generations. Can be changed to a while-loop
         that runs until set fitness score is reached
         '''
-        for i in range(25):
+        for i in range(50):
         #while fitness_score > preferred_fitness_score: 
             t1 = time.perf_counter() 
             sim_output = []
