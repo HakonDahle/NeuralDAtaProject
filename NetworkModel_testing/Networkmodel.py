@@ -77,6 +77,37 @@ def network_initialise():
     G_ = nx.Graph()
     #G_.add_weighted_edges_from(edge_list)
     return int(node_amount), int(population_size), G_, edge_list, trial_name
+"""
+Network visualization
+"""
+def net_visualisation(G_,node_amount,ti_me):
+    color_map = []
+    pos = nx.spring_layout(G_, iterations=300, seed=3977)
+    for nodenr in range(node_amount):
+        if G_.nodes[nodenr]['prev spike'] == 1:
+            color_map.append('green')
+            print("spiking node: ",nodenr)
+        if G_.nodes[nodenr]['exhausted'] > 0 and G_.nodes[nodenr]['prev spike'] != 1:
+            color_map.append('red')
+            print("Exhausted node: ",nodenr)
+            
+        if (G_.nodes[nodenr]['exhausted'] == 0) and (G_.nodes[nodenr]['prev spike'] == 0):
+            color_map.append('gray')
+            print("neutral node: ",nodenr)
+    print("colormap: ",color_map,"length: ", len(color_map))
+    print("time: ",ti_me)
+    nx.draw(
+    G_,
+    pos,
+    node_color=color_map,
+    edgecolors="tab:gray",  # Node surface color
+    edge_color="tab:gray",  # Color of graph edges
+    node_size=100,
+    with_labels=True,
+    width=3,
+    )
+    plt.show()
+    
 
 
 """

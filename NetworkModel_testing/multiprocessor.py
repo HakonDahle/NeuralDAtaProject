@@ -136,34 +136,9 @@ def multi_phenotype_generator(params):
 
                 print(sec," seconds has passed.")
                 
-                '''file_write.write_pheno_file(phenofilepath,phenotype_)
-                phenotype_.clear()'''
+            #nm.net_visualisation(G_,len(gen[0]),time)    
             
             
-            
-            '''
-            """
-            Drawing
-            """
-            pos = nx.spring_layout(G_, iterations=300, seed=3977)
-            color_map = []
-            if G_.nodes[nodenr]['prev spike'] == 1:
-                color_map.append('green')
-            elif G_.nodes[nodenr]['exhausted'] > 0:
-                color_map.append('red')
-            else:
-                color_map.append('gray')
-            nx.draw(
-                G_,
-                pos,
-                node_color=color_map,
-                edgecolors="tab:gray",  # Node surface color
-                edge_color="tab:gray",  # Color of graph edges
-                node_size=100,
-                with_labels=True,
-                width=3,
-            )
-            plt.show()'''
     #print("selffire_count: ",selffire_count, "potential_count: ",potential_count)
     #print("G_.edges.data()",G_.edges.data('weight'))
     #print("Process terminating")

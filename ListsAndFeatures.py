@@ -10,8 +10,8 @@ def readFile(fileName):
         fileObj.close()
         return words
 
-dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
-sparse7231 = readFile('data\Sparse 7-2-31.spk.txt')
+#dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
+#sparse7231 = readFile('data\Sparse 7-2-31.spk.txt')
 t = []
 data = []
 
@@ -25,9 +25,9 @@ def datamanagement(datalist):
 width = 8   # Number of electrodes in x direction
 height = 8  # Number of electrodes in y
 
-t, data = datamanagement(sparse7231)
+#t, data = datamanagement(sparse7231)
 
-print(t)
+
 # Makes a list of each spike sorted for each electrode which stores the step nr. and time stamp
 def electrode_list(activeElectrodes,time):
     temp_array = []
@@ -65,8 +65,8 @@ def ArrayWideSpikeDetectionRate(time):
 ASDR = ArrayWideSpikeDetectionRate(t)
 
 
-plt.plot(data[0:1000])
-plt.show()
+'''plt.plot(data[0:1000])
+plt.show()'''
 '''
 plt.plot(ASDR[:len(ASDR)-1])
 plt.show()

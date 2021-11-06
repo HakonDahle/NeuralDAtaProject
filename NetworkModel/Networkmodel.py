@@ -15,6 +15,7 @@ from networkx.classes.reportviews import EdgeDataView
 """
 I N I T I A L I S E 
 """
+# 
 def init_generation(nodeamount,populationsize):
     node_amount = nodeamount
     population_size = populationsize
@@ -25,11 +26,8 @@ def init_generation(nodeamount,populationsize):
         for j in range(node_amount):
             node_generator.append((j,{"decay constant": r.uniform(decay_min,decay_max), "threshold": r.uniform(threshold_min,threshold_max), "prob selffire": r.uniform(prob_selffire_min,prob_selffire_max), "obstruction period": r.uniform(obstruction_period_min,obstruction_period_max)  # Configurable variables
             ,"spike": 0, "prev spike": 0, "exhausted": 0, "potential": 0}))  # Functional variables
-            #print("i: ",i,"j: ",j,node_generator) 
         node_list[i] = copy.deepcopy(node_generator)
         node_generator.clear()
-    '''[(0,1,1),(0,7,1),(1,2,1),(1,8,1),(2,3,1),(2,9,1),(3,4,1),(3,10,1),(4,5,1)]''' # Test string
-    #print("node_list[0]: ",node_list[0])
     return node_list
 
 def init_connection(populationsize):
@@ -46,9 +44,6 @@ def init_connection(populationsize):
                 (38,39,weight_factor),(38,46,weight_factor),(39,40,weight_factor),(39,47,weight_factor),(40,41,weight_factor),(40,48,weight_factor),(41,42,weight_factor),(41,49,weight_factor),(42,43,weight_factor),(42,50,weight_factor),(43,44,weight_factor),(43,51,weight_factor),(44,45,weight_factor),(44,52,weight_factor),(45,53,weight_factor),
                 (46,47,weight_factor),(47,48,weight_factor),(47,54,weight_factor),(48,49,weight_factor),(48,55,weight_factor),(49,50,weight_factor),(49,56,weight_factor),(50,51,weight_factor),(50,57,weight_factor),(51,52,weight_factor),(51,58,weight_factor),(52,53,weight_factor),(52,59,weight_factor),
                 (54,55,weight_factor),(55,56,weight_factor),(56,57,weight_factor),(57,58,weight_factor),(58,59,weight_factor)]
-    '''print("Edgelist[0]: ",edge_list[0])
-    print("Edgelist[1]: ",edge_list[1])
-    print("Edgelist[2]: ",edge_list[2])'''
     return edge_list      
 
 
@@ -65,23 +60,38 @@ def network_initialise():
 
     if CA == "yes":
         edge_list = init_connection(population_size)
-    '''if CA == "yes":
-        edge_list = [(0,1,0.1),(0,7,0.1),(1,2,0.1),(1,8,0.1),(2,3,0.1),(2,9,0.1),(3,4,0.1),(3,10,0.1),(4,5,0.1),(4,11,0.1),(5,12,0.1),
-            (6,7,0.1),(6,14,0.1),(7,8,0.1),(7,15,0.1),(8,9,0.1),(8,16,0.1),(9,10,0.1),(9,17,0.1),(10,11,0.1),(10,18,0.1),(11,12,0.1),(11,19,0.1),(12,13,0.1),(12,20,0.1),(13,21,0.1),
-            (14,15,0.1),(14,22,0.1),(15,16,0.1),(15,23,0.1),(16,17,0.1),(16,24,0.1),(17,18,0.1),(17,25,0.1),(18,19,0.1),(18,26,0.1),(19,20,0.1),(19,27,0.1),(20,21,0.1),(20,28,0.1),(21,29,0.1),
-            (22,23,0.1),(22,30,0.1),(23,24,0.1),(23,31,0.1),(24,25,0.1),(24,32,0.1),(25,26,0.1),(25,33,0.1),(26,27,0.1),(26,34,0.1),(27,28,0.1),(27,35,0.1),(28,29,0.1),(28,36,0.1),(29,37,0.1),
-            (30,31,0.1),(30,38,0.1),(31,32,0.1),(31,39,0.1),(32,33,0.1),(32,40,0.1),(33,34,0.1),(33,41,0.1),(34,35,0.1),(34,42,0.1),(35,36,0.1),(35,43,0.1),(36,37,0.1),(36,44,0.1),(37,45,0.1),
-            (38,39,0.1),(38,46,0.1),(39,40,0.1),(39,47,0.1),(40,41,0.1),(40,48,0.1),(41,42,0.1),(41,49,0.1),(42,43,0.1),(42,50,0.1),(43,44,0.1),(43,51,0.1),(44,45,0.1),(44,52,0.1),(45,53,0.1),
-            (46,47,0.1),(47,48,0.1),(47,54,0.1),(48,49,0.1),(48,55,0.1),(49,50,0.1),(49,56,0.1),(50,51,0.1),(50,57,0.1),(51,52,0.1),(51,58,0.1),(52,53,0.1),(52,59,0.1),
-            (54,55,0.1),(55,56,0.1),(56,57,0.1),(57,58,0.1),(58,59,0.1)]'''
     G_ = nx.Graph()
-    #G_.add_weighted_edges_from(edge_list)
     return int(node_amount), int(population_size), G_, edge_list, trial_name
 
 
 """
+Network visualization
+"""
+
+
+def net_visualisation(G_,node_amount,ti_me,color_map):
+    #color_map = []
+    pos = nx.spring_layout(G_, iterations=300, seed=3977)
+    #print("colormap: ",color_map,"length: ", len(color_map))
+    #print("time: ",ti_me)
+    nx.draw(
+    G_,
+    pos,
+    node_color=color_map,
+    edgecolors="tab:gray",  # Node surface color
+    edge_color="tab:gray",  # Color of graph edges
+    node_size=500,
+    with_labels=True,
+    width=3,
+    )
+    plt.show()
+    
+
+"""
 M U T A T I O N
 """
+
+
 def mutation(gen,best_match,node_amount,population_size,G_,edge_list):
     mutated_population = [[]]*population_size
     G_.add_weighted_edges_from(edge_list[best_match])
@@ -139,32 +149,27 @@ def mutation(gen,best_match,node_amount,population_size,G_,edge_list):
                                         best_weight[s][2] = float(weight_max)
                                     #print("AFTER node: ",j,"edges: ",edges,"best_weight[s][2]: ",best_weight[s][2])
                             #print("best_weight[1]: ",best_weight[1])
-            '''for k in (G_.adj[j]):
-                if r.random() <= 0.01:
-                    print("node: ",j,"adj items: ",G_.adj[j],"k: ",k)
-                t.sleep(3)'''
         mutated_population[i] = best_individual
         edge_list[best_match] = best_weight
-        #print("best_weight: ",best_weight)
-        
-        #print("Mutated population[0]                          : ",mutated_population[0])
-        #print("Mutated population[1]                          : ",mutated_population[1])
-        #print("Mutated population[2]                          : ",mutated_population[2])
-        #t.sleep(20)
     return mutated_population, edge_list
 
 
 """
-P R O G R A M
+Evolutionary Algorithm
 """
-
-if __name__ == '__main__':
+# Main program
+if __name__ == '__main__':  # Makes sure program is initialised only once, and not for every paralell process
+    
+    # Runs the EA for X number of trials
     for _ in range(100):
-        # Initialise
-        t0 = t.perf_counter()
         
+        '''
+        Initialise
+        '''
+
+        t0 = t.perf_counter()   # Initial timestamp
         
-        ###
+        # Min/Max parameters are used for initial node configuration, and range during mutation
         decay_min = 0.0001
         decay_max = 5
         decay_percent_of_max = 0.1
@@ -178,79 +183,70 @@ if __name__ == '__main__':
         prob_selffire_percent_of_max = 0.1
         prob_selffire_range = (prob_selffire_max)*prob_selffire_percent_of_max
         obstruction_period_min = 0.003 
-        obstruction_period_max = 5
+        obstruction_period_max = 1
         obstruction_period_percent_of_max = 0.1
         obstruction_period_range = (obstruction_period_max)*obstruction_period_percent_of_max
         weight_min = 0.01
         weight_max = 1
         weight_percent_of_max = 0.1
         weight_range = (weight_max)*weight_percent_of_max
-        # could be declared in initialise() and returned
-    
-    
 
-        nodeamount, populationsize, G, edgelist, trialname = network_initialise()
-        generation = init_generation(nodeamount,populationsize)
-    
+        # Initialising the network
+        nodeamount, populationsize, G, edgelist, trialname = network_initialise()   # setting the configuration
+        generation = init_generation(nodeamount,populationsize) # Setting up the list of nodes and edges to be included in the network
 
+        '''
+        Update
+        '''
         
-
-        # Update
-        nr_of_generations = 25
-        generation_nr = 0
-        trial_nr = 0
-        fitnesscore = 900000
+        # Declaring variables used in Update
+        nr_of_generations = 25  # Max number of generations
+        generation_nr = 0   # Counts generations
+        trial_nr = 0    # Counts trials
+        fitnesscore = 900000    # imaginary high fitness score
 
         print("Trial version: ",trial_nr)
+
+        # Phenotype. Fitness function. Mutation - new generation. Repeat:
+        # Each generation is generating the phenotype, which is evaluated by the fitness function. 
+        # Then the elite individual is passed through a clone and mutation function 
+        # Finally the mutated individuals comprise the new generation.
         for _ in range(nr_of_generations):
-            t1 = t.perf_counter()
-    
+            
+            t1 = t.perf_counter()   # Start time for the new generation
+
+            # Prints the generation
             if generation_nr == 0:
                 print("Initial generation")
-                '''parameter_progress_file = open("data\parameter_progress.txt","w")
-                parameter_progress_file.write("Initial generation:\n")
-                parameter_progress_file.close()'''
             else:
                 print("Generation: ",generation_nr)
-                '''parameter_progress_file = open("data\parameter_progress.txt","a")
-                parameter_progress_file.write("\n --------------------\n Generation number: "+str(generation_nr)+"\n ---------------------\n")
-                parameter_progress_file.close()'''
 
-
-            #phenotype = phenotype_generator(G,generation,edgelist,populationsize)
-            args = multiprocessor.multi_variables(G,generation,populationsize,edgelist)
-            phenotype = multiprocessor.multiprocessor(args)
-            #print("generation_nr: ",generation_nr,"name: ",__name__)
+            args = multiprocessor.multi_variables(G,generation,populationsize,edgelist) # Formatting a list with multiple variables that can be handled by multiprocessing 
+            phenotype = multiprocessor.multiprocessor(args) # Testing the artificial neuronal network in an environment. 
             
-
-            t2 = t.perf_counter()
-            bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)
+            t2 = t.perf_counter()   # Stop time for phenotype production
+            bestmatch, fitnesscore = fit.pick_best_rule_set(phenotype)  # The generated spike data is passed through the fitness function
             
             print("Best match: ",bestmatch, "fitnesscore: ",fitnesscore)
-            file_write.phenotype_file(fitnesscore,generation_nr,trialname,trial_nr,bestmatch,phenotype)
-            file_write.fitness_file(fitnesscore,generation_nr,trialname,trial_nr)
 
+            file_write.phenotype_file(fitnesscore,generation_nr,trialname,trial_nr,bestmatch,phenotype) # Writes spikes and coherent timestamp to file for permanent storage in the same format as reference data
+            file_write.fitness_file(fitnesscore,generation_nr,trialname,trial_nr)   # Writes fitness score  in chronological order to file for permanent storage.
+
+            # Starts a new trial if the fitness score is satisfactory
             if fitnesscore < 10:
                 print("Fitnesscore is below 10. Starting new trial.")
                 break
                
-            generation, edgelist = mutation(generation,bestmatch,nodeamount,populationsize,G,edgelist)
+            generation, edgelist = mutation(generation,bestmatch,nodeamount,populationsize,G,edgelist)  # Cloning the best individual of the population and mutates their genotype to form a new generation
 
-            generation_nr += 1
+            generation_nr += 1  # Generation counter
+
+            # Resets if fitness score is not satisfactory within 25 generations
             if generation_nr > 25:
                 generation_nr = 0
 
-        t3 = t.perf_counter()
-        trial_nr +=1
+
+        t3 = t.perf_counter()   # Stop time for the new generation
+        trial_nr +=1    # Trial counter
+        
         print("total elapsed time: ",round(t3-t0,2))
-        '''f = open("Data\Best_spikes.txt", "w")
-        for element in phenotype[bestmatch]:
-            f.write(str(element[0]) + " " + str(element[1]) + '\n')
-        f.close()'''
- 
-        """
-
-        - Apply number of active electrodes in fitness function?
-        - Fix weights
-
-        """

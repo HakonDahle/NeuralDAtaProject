@@ -56,17 +56,18 @@ def multi_phenotype_generator(params):
         print("edges: ",edges,"\n")
         print("edges[0]: ",edges[0])'''
         phenotype_ = []
-        fs = 57
+        fs = 1
         time = 0
         G_.add_nodes_from(gen[0])
         G_.add_weighted_edges_from(edges[0])
         selffire_count = 0
         potential_count = 0 
-        time_limit = 2
+        time_limit = 1800
         sec = 0
         time_control = 0
         
         while time < time_limit:
+            color_map = []
             for nodenr in range(len(gen[0])):
                 #print("1",G_.nodes[nodenr])
                 self_prob = r.random()
@@ -81,12 +82,10 @@ def multi_phenotype_generator(params):
                 
                 if G_.nodes[nodenr]["exhausted"] > 0:   # Exhausted nodes are inactive for a period of time
                     G_.nodes[nodenr]["exhausted"] -= 1/fs
+                    color_map.append('red')
                     #print("exhausted: ",G_.nodes[nodenr]["exhausted"])
                 
                 elif G_.nodes[nodenr]["exhausted"] == 0:
-                    if G_.nodes[nodenr]["prev spike"] == 1:
-                        G_.nodes[nodenr]["prev spike"] = 0
-                    
                     for k, nbrs in G_.adj.items():  # Checks the neighbours for spikes and multiplies it with the weighted edge
                         if k == nodenr:
                             
@@ -123,11 +122,16 @@ def multi_phenotype_generator(params):
                 #print("2",G_.nodes[nodenr])
                 if G_.nodes[nodenr]["spike"] == 1:  # Resets spikes if there has been a spike in last iteration and deactivates the node
                     G_.nodes[nodenr]["prev spike"] = 1
+                    color_map.append('yellow')
                     G_.nodes[nodenr]["spike"] = 0
                     G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
                     G_.nodes[nodenr]["potential"] = 0
                     G_.nodes[nodenr]["exhausted"] = G_.nodes[nodenr]["obstruction period"]
-
+                elif G_.nodes[nodenr]["prev spike"] == 1:
+                    G_.nodes[nodenr]["prev spike"] = 0
+                
+                if (G_.nodes[nodenr]["prev spike"] == 0) and (G_.nodes[nodenr]["spike"] == 0) and (G_.nodes[nodenr]["exhausted"] == 0):
+                    color_map.append('gray')
             time += 1/fs
             
             if (time - time_control) > 120.01:
@@ -136,34 +140,9 @@ def multi_phenotype_generator(params):
 
                 print(sec," seconds has passed.")
                 
-                '''file_write.write_pheno_file(phenofilepath,phenotype_)
-                phenotype_.clear()'''
+            nm.net_visualisation(G_,len(gen[0]),time,color_map)    
             
             
-            
-            '''
-            """
-            Drawing
-            """
-            pos = nx.spring_layout(G_, iterations=300, seed=3977)
-            color_map = []
-            if G_.nodes[nodenr]['prev spike'] == 1:
-                color_map.append('green')
-            elif G_.nodes[nodenr]['exhausted'] > 0:
-                color_map.append('red')
-            else:
-                color_map.append('gray')
-            nx.draw(
-                G_,
-                pos,
-                node_color=color_map,
-                edgecolors="tab:gray",  # Node surface color
-                edge_color="tab:gray",  # Color of graph edges
-                node_size=100,
-                with_labels=True,
-                width=3,
-            )
-            plt.show()'''
     #print("selffire_count: ",selffire_count, "potential_count: ",potential_count)
     #print("G_.edges.data()",G_.edges.data('weight'))
     #print("Process terminating")
