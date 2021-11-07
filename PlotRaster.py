@@ -27,7 +27,11 @@ def datamanagement(datalist):
 
 dense2310 = readFile('data\Dense 2-3-10.spk.txt') # Loads the data
 sparse7231 = readFile('data\Dense 2-3-10.spk.txt')
-Gen16_fit602 = readFile('CA_Write_to_file/Test_Results/06_11_2021__17_57_47/Generation_5_FitScore_161.txt')
+Gen16_fit602 = readFile('Results\Generation_16_FitScore_602.txt')
+#Gen16_fit602 = readFile('Results\Generation_75_FitScore_174.txt')
+Gen5_fit161 = readFile('Results\Generation_5_FitScore_161.txt')
+fintesscore_Gen16_fit602 = readFile('Results\Fitness_score_16_602.txt')
+fintesscore_Gen5_fit161 = readFile('Results\Fitness_score_5_161.txt')
 
 '''Gen13_fit9 = readFile('data\Phenotype\Generation_13_Fitnesscore_9.txt') # CA_11ind_Len_Weight05_031121__1216
 Gen8_fit6 = readFile('data\Phenotype\Generation_8_Fitnesscore_6.txt')   # CA_11ind_Len_Weight05_011121_2012
@@ -45,6 +49,7 @@ fitnesscore_Gen25_fit22 = readFile('data\Fitnesscores\FitnesscoresCA_11ind_Len_G
 
 t_fasit, data_fasit = datamanagement(dense2310)
 t_Gen16_fit602, data_Gen16_fit602 = datamanagement(Gen16_fit602)
+t_gen5_fit161, data_Gen5_fit161 = datamanagement(Gen5_fit161)
 #t_Gen8_fit6, data_Gen8_fit6 = datamanagement(Gen8_fit6)
 #t_Gen25_fit6362, data_Gen25_fit6362 = datamanagement(Gen25_fit6362)
 #t_Gen23_fit291, data_Gen23_fit291 = datamanagement(Gen23_fit291)
@@ -85,7 +90,7 @@ def show_rasterplot1(time_from_fasit,data_from_fasit,t1,data1):
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.scatter(t1,data1,s=0.8,alpha=0.5,c='red')
     #plt.title('Network model: Fitnesscore 9, Weight+=0.05',size=32, fontweight="bold")
-    plt.title('CA model: Fitnesscore 161',size=25, fontweight="bold")
+    plt.title('CA model: Fitnesscore 174',size=25, fontweight="bold")
     plt.ylabel('Node',size=30)
     plt.xlabel('Time [s]',size=30)
     plt.show()  # displays the rasterplot
@@ -96,24 +101,25 @@ def show_rasterplot2(time_from_fasit,data_from_fasit,t1,data1,t2,data2):
     ax.axes.get_xaxis().set_visible(False)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.scatter(time_from_fasit,data_from_fasit,s=0.8,alpha=0.5,c='red')
-    plt.title('Network model: Fitnesscore 6362, Unweighted',size=30,fontweight="bold")
+    plt.title('Reference data: Dense 2-3-31',size=30,fontweight="bold")
     plt.ylabel('Electrode',size=30)
     ax = plt.subplot(312)
     ax.axes.get_xaxis().set_visible(False)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.scatter(t1,data1,s=0.8,alpha=0.5,c='red')
-    plt.title('Network model, Fitnesscore 6, Weight+=0.05',size=30,fontweight="bold")
+    plt.title('CA Model, Fitnesscore 161, No penalty for unused electrodes',size=30,fontweight="bold")
     plt.ylabel('Node',size=30)
     ax = plt.subplot(313)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.scatter(t2,data2,s=0.8,alpha=0.5,c='red')
-    plt.title('Network model, Fitnesscore 22, Weight in genotype',size=30,fontweight="bold")
+    plt.title('CA Model, Fitnesscore 602, Penalizes unused electrodes',size=30,fontweight="bold")
     plt.xlabel('Time [s]',size=30)
     plt.ylabel('Node',size=30)
     plt.show()  # displays the rasterplot
 
 show_rasterplot1(t_fasit,data_fasit,t_Gen16_fit602,data_Gen16_fit602)
 #show_rasterplot2(t_Gen25_fit6362, data_Gen25_fit6362,t_Gen8_fit6, data_Gen8_fit6,t_Gen25_fit22, data_Gen25_fit22)
+show_rasterplot2(t_fasit,data_fasit,t_gen5_fit161,data_Gen5_fit161,t_Gen16_fit602,data_Gen16_fit602)
 
 """
 Fitnesscores
@@ -130,22 +136,23 @@ def show_fitnesscores(fitnesscores):
         for j in range(len(fitnesscores[i])):
             fitnesscores[i][j] = int(fitnesscores[i][j])
     
-    blue_line = mlines.Line2D([], [], color='blue', label='Spike triggered increment of 0.05)')
-    green_line = mlines.Line2D([], [], color='green', label='Unweighted')
+    blue_line = mlines.Line2D([], [], color='blue', label='No penalty for unused electrodes')
+    green_line = mlines.Line2D([], [], color='green', label='Penalizes unused electrodes')
     green_dotted = mlines.Line2D([], [], color='green',ls='--', label='Unweighted (pop.size 7)')
     red_line = mlines.Line2D([], [], color='red', label='Genotype', )
     
     #ax.tick_params(axis='both', which='major', labelsize=20)
     plt.plot(fitnesscores[0],color='blue')  # CA_11ind_Len_weight+05
-    plt.plot(fitnesscores[1],color='blue')  # CA_11ind_Len_weight+05
-    plt.plot(fitnesscores[2],color='green') # CA_11ind_Len_noweight
+    plt.plot(fitnesscores[1],color='green')  # CA_11ind_Len_weight+05
+    '''plt.plot(fitnesscores[2],color='green') # CA_11ind_Len_noweight
     plt.plot(fitnesscores[3],label='Population size 7',color='green',ls='--') # CA_7ind_Len_noweight
     plt.plot(fitnesscores[4],color='red')   # CA_11ind_Len_Genweight
-    plt.plot(fitnesscores[5],color='red')
-    plt.legend(handles=[blue_line,green_line,green_dotted,red_line],loc='upper right') # ,prop={'size': 22}
+    plt.plot(fitnesscores[5],color='red')'''
+    #plt.legend(handles=[blue_line,green_line,green_dotted,red_line],loc='upper right') # ,prop={'size': 22}
+    plt.legend(handles=[blue_line,green_line],loc='upper right' ,prop={'size': 22}) # ,prop={'size': 22}
     plt.ylabel('Fitnesscore')   # ,size=26
     plt.xlabel('Generation')    # , size=26
-    plt.title('Weights\' impact on Fitnesscores',fontweight="bold") # , size=34
+    plt.title('Fitnesscore CA model',fontweight="bold", size = 34) # , size=34
     #plt.ylim(0,maxy)
     #plt.xlim(0,maxx)
     plt.show()
@@ -185,10 +192,21 @@ fitnesscores.append(fitnesscore_Gen23_fit291)
 fitnesscores.append(fitnesscore_Gen25_fit22)
 
 fitnesscores.sort(key=len)'''
-fitnesscores = []
-#fitnesscores.append(fitnesscore)
+maxlength = max(len(fintesscore_Gen5_fit161),len(fintesscore_Gen16_fit602))
+if len(fintesscore_Gen5_fit161) < maxlength:
+    for _ in range(maxlength-len(fintesscore_Gen5_fit161)):
+        fintesscore_Gen5_fit161.append(fintesscore_Gen5_fit161[-1])
 
-#show_fitnesscores(fitnesscores)
+if len(fintesscore_Gen16_fit602) < maxlength:
+    for _ in range(maxlength-len(fintesscore_Gen16_fit602)):
+        fintesscore_Gen16_fit602.append(fintesscore_Gen16_fit602[-1])
+
+fitnesscores = []
+fitnesscores.append(fintesscore_Gen5_fit161)
+fitnesscores.append(fintesscore_Gen16_fit602)
+fitnesscores.sort(key=len)
+
+show_fitnesscores(fitnesscores)
 
 """
 ASDR
@@ -212,29 +230,29 @@ def ArrayWideSpikeDetectionRate(time):
     return f
     
 
-def show_ASDR_result(ASDR_Gen,ASDR_Comp1):    
+def show_ASDR_result(ASDR_Gen,ASDR_Comp1, ASDR_Comp2):    
     fig = plt.figure(4)
-    ax = plt.subplot(211)
+    ax = plt.subplot(311)
     #ax.axes.get_xaxis().set_visible(False)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.plot(ASDR_Gen)
     plt.ylabel('ASDR', size=30)
     plt.title('ASDR Reference data', size=30,fontweight="bold")
 
-    ax = plt.subplot(212)
+    ax = plt.subplot(312)
     #ax.axes.get_xaxis().set_visible(False)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.plot(ASDR_Comp1)
     plt.ylabel('ASDR', size=30)
     plt.xlabel('Time[s]', size=30)
-    plt.title('ASDR generated data', size=30,fontweight="bold")
+    plt.title('ASDR generated data, no penalty', size=30,fontweight="bold")
 
-    '''ax = plt.subplot(313)
+    ax = plt.subplot(313)
     ax.tick_params(axis='both', which='major', labelsize=26)
     plt.plot(ASDR_Comp2)
     plt.ylabel('ASDR', size=30)
     plt.xlabel('Time[s]', size=30)
-    plt.title('ASDR Weight in genotype', size=40,fontweight="bold")'''
+    plt.title('ASDR generated data, with penalty', size=30,fontweight="bold")
     plt.show()
 
 def show_ASDR_discussion(ASDR_Gen,ASDR_Comp1,ASDR_Comp2):
@@ -256,7 +274,8 @@ ASDR_Gen8_fit6 = ArrayWideSpikeDetectionRate(t_Gen8_fit6)
 ASDR_Gen25_fit6362 = ArrayWideSpikeDetectionRate(t_Gen25_fit6362)
 ASDR_Gen25_fit22 = ArrayWideSpikeDetectionRate(t_Gen25_fit22)'''
 ASDR_Gen16_fit602 = ArrayWideSpikeDetectionRate(t_Gen16_fit602)
+ASDR_Gen5_fit161 = ArrayWideSpikeDetectionRate(t_gen5_fit161)
 ASDR_data = ArrayWideSpikeDetectionRate(t_fasit)
 
-show_ASDR_result(ASDR_data,ASDR_Gen16_fit602)    
-#show_ASDR_discussion(ASDR_Gen8_fit6,ASDR_Gen25_fit6362,ASDR_Gen25_fit22)
+show_ASDR_result(ASDR_data,ASDR_Gen5_fit161,ASDR_Gen16_fit602)    
+#show_ASDR_discussion(ASDR_data,ASDR_Gen16_fit602,ASDR_Gen5_fit161)
