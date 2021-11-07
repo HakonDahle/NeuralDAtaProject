@@ -74,7 +74,7 @@ def sim_MP(rule_set,config,nextConfig):
     time = 0
      
     process = os.getpid() #name of process
-    filename = f'CA_Write_to_file/Spike_Lists/process_{process}.txt'
+    filename = f'CA_Model/Spike_Lists/process_{process}.txt'
     while time < sec_to_run:
         spikes_info, time, config, nextConfig = update_MP(rule_set, time,config,nextConfig)
         copy_spikes = copy.deepcopy(spikes_info)

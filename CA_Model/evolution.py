@@ -69,8 +69,8 @@ if __name__ == '__main__':
         ''' Creates a folder with timestamp to save test results in'''
         now = datetime.now()
         dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
-        full_path = 'CA_Write_to_file/Test_Results'
-        path = ("\CA_Write_to_file\Test_Results")
+        full_path = 'CA_Model/Test_Results'
+        path = ("\CA_Model\Test_Results")
         os.makedirs(f'{full_path}/{dt_string}')
         print(f"{path}\\{dt_string}")
         
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         '''
         Deletes generated files with spikes
         '''
-        dir = 'CA_Write_to_file/Spike_Lists'
+        dir = 'CA_Model/Spike_Lists'
         for f in os.listdir(dir):
             os.remove(os.path.join(dir, f))
 
@@ -136,8 +136,8 @@ if __name__ == '__main__':
             Takes the best spike result-file  and saves it in the testresult folder for this test
             '''
             rule_name = sim_output[best_rule].replace("CA_Write_to_file/Spike_Lists/","")
-            src = f'CA_Write_to_file/Spike_Lists/{rule_name}'
-            new_name = f'CA_Write_to_file/Test_Results/{dt_string}/Generation_{generation}_FitScore_{fitness_score}.txt'
+            src = f'CA_Model/Spike_Lists/{rule_name}'
+            new_name = f'CA_Model/Test_Results/{dt_string}/Generation_{generation}_FitScore_{fitness_score}.txt'
         
             os.rename(src,new_name)
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
             '''
             Delete folder with generated spike lists after saving the best one in testresult folder
             '''
-            dir = 'CA_Write_to_file/Spike_Lists'
+            dir = 'CA_Model/Spike_Lists'
             for f in os.listdir(dir):
                 os.remove(os.path.join(dir, f))
 

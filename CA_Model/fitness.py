@@ -43,9 +43,9 @@ def best_fit(sim_output):
     f.close()
     print(f"generated spikes: {generated_spikes}, imported spikes: {len(list_of_imported_spikes)}, diff: {len(list_of_imported_spikes)-generated_spikes}")
     diff = abs(len(list_of_imported_spikes) - generated_spikes)
-    '''diff += use_electrodes(sim_output)           #penalizes unused electrodes
+    diff += use_electrodes(sim_output)           #penalizes unused electrodes
     if generated_spikes < 30000:
-        diff +=500000'''
+        diff +=500000
 
     return diff
 
