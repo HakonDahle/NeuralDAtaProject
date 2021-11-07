@@ -8,6 +8,8 @@ import os
 
 
 '''
+NB! Must be run from directory above CA_Model for paths to be correct
+
 Select number of rules to make for each generation.
 Set wished fitness score.
 '''
