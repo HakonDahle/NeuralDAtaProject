@@ -9,6 +9,8 @@ import os
 
 '''
 NB! Must be run from directory above CA_Model for paths to be correct
+NBNB! If stored in a onedrive-folder, a PermissionError may occur. 
+Turn off OneDrive syncronization to fix problem.
 
 Select number of rules to make for each generation.
 Set wished fitness score.
@@ -137,7 +139,7 @@ if __name__ == '__main__':
             '''
             Takes the best spike result-file  and saves it in the testresult folder for this test
             '''
-            rule_name = sim_output[best_rule].replace("CA_Write_to_file/Spike_Lists/","")
+            rule_name = sim_output[best_rule].replace("CA_Model/Spike_Lists/","")
             src = f'CA_Model/Spike_Lists/{rule_name}'
             new_name = f'CA_Model/Test_Results/{dt_string}/Generation_{generation}_FitScore_{fitness_score}.txt'
         
