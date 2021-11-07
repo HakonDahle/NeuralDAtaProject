@@ -13,7 +13,7 @@ Set wished fitness score.
 '''
 
 
-number_of_rules = 7
+number_of_rules = 7 #corresponds to the number of cpu-1 available on computing computer
 preferred_fitness_score = 15000
 
 '''       
