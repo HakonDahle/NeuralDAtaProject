@@ -29,7 +29,7 @@ def pick_best_rule_set(set_of_rules):
     for i in range(len(set_of_rules)):
         
         index = i
-        differanse = best_fit(set_of_rules[i])
+        differanse = best_fit_test(set_of_rules[i])
         if differanse < score:
             score = differanse
             beste_regel = index

@@ -178,7 +178,7 @@ if __name__ == '__main__':
         obstruction_period_max = 0.5
         obstruction_period_percent_of_max = 0.1
         obstruction_period_range = (obstruction_period_max)*obstruction_period_percent_of_max
-        weight_min = 0.01
+        weight_min = 0.5
         weight_max = 1
         weight_percent_of_max = 0.1
         weight_range = (weight_max)*weight_percent_of_max
@@ -207,17 +207,18 @@ if __name__ == '__main__':
         # Finally the mutated individuals comprise the new generation.
         for _ in range(nr_of_generations):
             
-            t1 = t.perf_counter()   # Start time for the new generation
-
             if generation_nr == 0:
                 print("Initial generation")
             else:
                 print("Generation: ",generation_nr)
 
+            t1 = t.perf_counter()   # Start time for the new generation
+
             phenotype = sim.multiprocessor(population)   # Testing the artificial neuronal network in an environment.
 
-
             t2 = t.perf_counter()   # Stop time for phenotype production
+            
+            print("time: ",t2-t1)
 
             bestindividual, fitnesscore = fit.pick_best_rule_set(phenotype) # The generated spike data is passed through the fitness function to get the best individual
             

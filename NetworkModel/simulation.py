@@ -25,12 +25,12 @@ def multi_phenotype_generator(G_):
         print("Process initialising: ",current_process.name)
 
         phenotype_ = []
-        fs = 114   # Sampling frequency
+        fs = 1000   # Sampling frequency
         time = 0
 
         selffire_count = 0  # Used for analysing network behaviour
         potential_count = 0 # Used for analysing network behaviour
-        time_limit = 60   # Max run time in seconds
+        time_limit = 1800   # Max run time in seconds
         sec = 0
         time_control = 0
         
